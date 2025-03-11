@@ -43,8 +43,8 @@ jobs:
             exit 1
         fi
     - name: failed tests 🚩
-        working-directory: tests
-        if: ${{ failure() }}
-        run: |
+      working-directory: tests
+      if: ${{ failure() }}
+      run: |
           echo "check docker logs"
           docker compose -f logs
