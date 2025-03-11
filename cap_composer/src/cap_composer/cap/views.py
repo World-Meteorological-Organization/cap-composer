@@ -1,8 +1,8 @@
 import json
 
-from alertwise.capeditor.constants import SEVERITY_MAPPING
-from alertwise.capeditor.models import CapSetting
-from alertwise.capeditor.utils import get_event_info
+from cap_composer.capeditor.constants import SEVERITY_MAPPING
+from cap_composer.capeditor.models import CapSetting
+from cap_composer.capeditor.utils import get_event_info
 from django.contrib.syndication.views import Feed
 from django.core.validators import validate_email
 from django.http import JsonResponse, HttpResponse

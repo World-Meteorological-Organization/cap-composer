@@ -3,8 +3,8 @@ from dateutil.parser import isoparse
 from rest_framework import serializers
 from wagtail.api.v2.utils import get_full_url
 
-from alertwise.capeditor.constants import CAP_MESSAGE_ORDER_SEQUENCE
-from alertwise.capeditor.utils import order_dict_by_keys, get_event_info
+from cap_composer.capeditor.constants import CAP_MESSAGE_ORDER_SEQUENCE
+from cap_composer.capeditor.utils import order_dict_by_keys, get_event_info
 
 
 def parse_tz(date_str):

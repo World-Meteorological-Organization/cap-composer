@@ -8,8 +8,8 @@ from django.urls import reverse
 from wagtail.telepath import register
 from wagtail.widget_adapters import WidgetAdapter
 
-from alertwise.capeditor.constants import WMO_HAZARD_EVENTS_TYPE_CHOICES
-from alertwise.capeditor.oet_v1_2 import OASIS_EVENT_TERMS_AS_CHOICES
+from cap_composer.capeditor.constants import WMO_HAZARD_EVENTS_TYPE_CHOICES
+from cap_composer.capeditor.oet_v1_2 import OASIS_EVENT_TERMS_AS_CHOICES
 
 
 class BaseMapWidget(Widget):

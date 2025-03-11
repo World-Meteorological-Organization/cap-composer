@@ -14,10 +14,10 @@ from wagtail.models import Orderable
 from wagtailiconchooser.widgets import IconChooserWidget
 from wagtailmodelchooser import register_model_chooser
 
-from alertwise.capeditor.blocks import (
+from cap_composer.capeditor.blocks import (
     ContactBlock
 )
-from alertwise.capeditor.forms.widgets import (
+from cap_composer.capeditor.forms.widgets import (
     HazardEventTypeWidget,
     MultiPolygonWidget,
     GeojsonFileLoaderWidget, EventCodeWidget

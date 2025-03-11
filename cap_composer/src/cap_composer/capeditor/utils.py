@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from magic import from_file
 
-from alertwise.capeditor.oet_v1_2 import OASIS_EVENT_TERMS_BY_CODE
+from cap_composer.capeditor.oet_v1_2 import OASIS_EVENT_TERMS_BY_CODE
 
 
 def format_date_to_oid(oid_prefix, date):
@@ -21,7 +21,7 @@ def format_date_to_oid(oid_prefix, date):
 
 
 def get_event_info(event, site=None, request=None):
-    from alertwise.capeditor.cap_settings import CapSetting
+    from cap_composer.capeditor.cap_settings import CapSetting
     
     cap_setting = None
     
