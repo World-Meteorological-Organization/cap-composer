@@ -60,7 +60,7 @@ run_setup_commands_if_configured() {
         # migrate database
     if [ "$MIGRATE_ON_STARTUP" = "true" ]; then
         echo "python /cap_composer/app/src/cap_composer/manage.py migrate"
-        python cap_composer/app/src/cap_composer/manage.py migrate --noinput
+        python /cap_composer/app/src/cap_composer/manage.py migrate --noinput
     fi
 
         # collect staticfiles
