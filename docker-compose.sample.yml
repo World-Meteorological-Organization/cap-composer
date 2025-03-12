@@ -144,5 +144,4 @@ services:
 
 networks:
   default:
-    external: true
     name: cap_composer_default
