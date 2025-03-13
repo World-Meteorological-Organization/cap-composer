@@ -1,8 +1,8 @@
-# cap_composer
+# 🌍 Originated in WMO Africa, now a Global Open-Source Initiative
 
-A [Wagtail](https://wagtail.io/)
+The WMO CAP Compposer is a [Wagtail](https://wagtail.io/)
 based [Common Alerting Protocol](https://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2-os.html) (CAP) Warning
-Composer.
+Composer developed by the World Meteorological Organization (WMO) Regional Office for Africa (RAF).
 
 This is a web-based tool for creating and managing CAP alerts. It is designed to be used by National Meteorological and
 Hydrological Services (NMHSs), disaster management agencies, and other organizations that have the authority to publish
@@ -37,8 +37,15 @@ at http://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2-os.html
 
 ## Documentation
 
-See here for more information on how to install and use the composer: [WMO CAP Composer Documentation](https://cap-composer.readthedocs.io/en/latest/)
+Please consult the [WMO CAP Composer Documentation](https://cap-composer.readthedocs.io/en/latest/) for information on installing and using the CAP Composer.
 
 ## Legal Disclaimer
 
 See [LEGAL.md](LEGAL.md)
+
+## Credits 🎖️
+
+The WMO CAP Composer was developed by the following [NORCAP](https://www.nrc.no/expert-deployment/norcap-what-we-do)-funded developers:
+
+- [Grace Amondi](https://github.com/Grace-Amondi)
+- [Erick Otenyo](https://github.com/erick-otenyo)

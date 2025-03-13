@@ -18,14 +18,15 @@ x-cap_composer-variables: &cap_composer-variables
   EMAIL_SMTP_USE_TLS: ${EMAIL_SMTP_USE_TLS:-}
   EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
   EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
-  DJANGO_ADMINS: ${cap_composer_ADMINS:-}
+  DJANGO_ADMINS: ${CAP_COMPOSER_ADMINS:-}
   DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-}
-  WAGTAILADMIN_BASE_URL: ${cap_composer_BASE_URL:-}
+  WAGTAILADMIN_BASE_URL: ${CAP_COMPOSER_BASE_URL:-}
+  WAGTAIL_PASSWORD_RESET_ENABLED: ${WAGTAIL_PASSWORD_RESET_ENABLED:-False}
   LANGUAGE_CODE: ${LANGUAGE_CODE:-en}
   CAP_CERT_PATH: ${CAP_CERT_PATH:-}
   CAP_PRIVATE_KEY_PATH: ${CAP_PRIVATE_KEY_PATH:-}
   CAP_SIGNATURE_METHOD: ${CAP_SIGNATURE_METHOD:-ECDSA_SHA256}
-  MBGL_RENDERER_URL: ${MBGL_RENDERER_URL:-}
+  MBGL_RENDERER_URL: ${MBGL_RENDERER_URL:-http://cap_composer_mbgl_renderer}
 
   # OpenTelemetry
   CAP_COMPOSER_ENABLE_OTEL: ${CAP_COMPOSER_ENABLE_OTEL:-}
@@ -141,6 +142,31 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - ${CAP_COMPOSER_WEB_PROXY_PORT:-8080}:80
+
+  mbgl_renderer:
+    container_name: cap_composer_mbgl_renderer
+    image: consbio/mbgl-renderer:0.8.0
+    restart: unless-stopped
+    ports:
+      - "80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  nginx_proxy_manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx_proxy_manager
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ${NPM_VOLUME_PATH}/data:/data
+      - ${NPM_VOLUME_PATH}/letsencrypt:/etc/letsencrypt
 
 networks:
   default:

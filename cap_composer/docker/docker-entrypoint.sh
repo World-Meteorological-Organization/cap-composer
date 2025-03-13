@@ -13,12 +13,12 @@ CAP_COMPOSER_NUM_OF_GUNICORN_WORKERS=${CAP_COMPOSER_NUM_OF_GUNICORN_WORKERS:-}
 CAP_COMPOSER_NUM_OF_CELERY_WORKERS=${CAP_COMPOSER_NUM_OF_CELERY_WORKERS:-}
 
 CAP_COMPOSER_LOG_LEVEL=${CAP_COMPOSER_LOG_LEVEL:-INFO}
-cap_composer_CELERY_BEAT_DEBUG_LEVEL=${cap_composer_CELERY_BEAT_DEBUG_LEVEL:-INFO}
+CAP_COMPOSER_CELERY_BEAT_DEBUG_LEVEL=${CAP_COMPOSER_CELERY_BEAT_DEBUG_LEVEL:-INFO}
 
-cap_composer_PORT="${cap_composer_PORT:-8000}"
+CAP_COMPOSER_PORT="${CAP_COMPOSER_PORT:-8000}"
 
 # get the current version of the app
-cap_composer_APP_VERSION=$(PYTHONPATH=/cap_composer/app/src/cap_composer python -c "import version; print(version.__version__)")
+CAP_COMPOSER_APP_VERSION=$(PYTHONPATH=/cap_composer/app/src/cap_composer python -c "import version; print(version.__version__)")
 
 show_help() {
     echo """
@@ -50,7 +50,7 @@ cat <<EOF
 ======================================
 WMO CAP Composer, based on Wagtail CMS
 
-Version $cap_composer_APP_VERSION
+Version $CAP_COMPOSER_APP_VERSION
 ======================================
 EOF
 }
@@ -111,7 +111,7 @@ run_server() {
         --log-file=- \
         --access-logfile=- \
         --capture-output \
-        -b "0.0.0.0:${cap_composer_PORT}" \
+        -b "0.0.0.0:${CAP_COMPOSER_PORT}" \
         --log-level="${CAP_COMPOSER_LOG_LEVEL}" \
         "${STARTUP_ARGS[@]}" \
         "${@:2}"
@@ -158,16 +158,16 @@ setup_otel_vars
 case "$1" in
 django-dev)
     run_setup_commands_if_configured
-    echo "Running Development Server on 0.0.0.0:${cap_composer_PORT}"
+    echo "Running Development Server on 0.0.0.0:${CAP_COMPOSER_PORT}"
     echo "Press CTRL-p CTRL-q to close this session without stopping the container."
     export OTEL_SERVICE_NAME=cap_composer-dev
-    attachable_exec python3 /cap_composer/app/src/cap_composer/manage.py runserver "0.0.0.0:${cap_composer_PORT}"
+    attachable_exec python3 /cap_composer/app/src/cap_composer/manage.py runserver "0.0.0.0:${CAP_COMPOSER_PORT}"
     ;;
 django-dev-no-attach)
     run_setup_commands_if_configured
-    echo "Running Development Server on 0.0.0.0:${cap_composer_PORT}"
+    echo "Running Development Server on 0.0.0.0:${CAP_COMPOSER_PORT}"
     export OTEL_SERVICE_NAME=cap_composer-dev
-    python /cap_composer/app/src/cap_composer/manage.py runserver "0.0.0.0:${cap_composer_PORT}"
+    python /cap_composer/app/src/cap_composer/manage.py runserver "0.0.0.0:${CAP_COMPOSER_PORT}"
     ;;
 gunicorn)
     export OTEL_SERVICE_NAME="cap_composer-asgi"
@@ -195,7 +195,7 @@ celery-worker-healthcheck)
     ;;
 celery-beat)
     export OTEL_SERVICE_NAME="cap_composer-celery-beat"
-    exec celery -A cap_composer beat -l "${cap_composer_CELERY_BEAT_DEBUG_LEVEL}" -S django_celery_beat.schedulers:DatabaseScheduler "${@:2}"
+    exec celery -A cap_composer beat -l "${CAP_COMPOSER_CELERY_BEAT_DEBUG_LEVEL}" -S django_celery_beat.schedulers:DatabaseScheduler "${@:2}"
     ;;
 *)
     echo "Command given was $*"
