@@ -50,7 +50,7 @@ services:
     ports:
       - "5432"
     healthcheck:
-      test: [ "CMD-SHELL", "su postgres -c \"pg_isready -U ${DB_USER}\"" ]
+      test: [ "CMD-SHELL", "su postgres -c \"pg_isready -U cap_composer\"" ]
       interval: 10s
       timeout: 5s
       retries: 5
