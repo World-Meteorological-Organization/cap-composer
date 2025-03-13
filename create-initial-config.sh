@@ -38,9 +38,6 @@ echo "SECRET_KEY=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 50)" >> .env
 echo "DB_PASSWORD=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 20)" >> .env
 echo "REDIS_PASSWORD=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 20)" >> .env
 echo "" >> .env
-# set CAP_COMPOSER_WEB_PROXY_PORT
-echo "CAP_COMPOSER_WEB_PROXY_PORT=8080" >> .env
-echo "WA
 # set host directories
 echo "DB_VOLUME_PATH=$1/db" >> .env
 echo "REDIS_VOLUME_PATH=$1/redis" >> .env
