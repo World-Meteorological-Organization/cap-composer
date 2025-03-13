@@ -10,9 +10,7 @@ x-cap_composer-variables: &cap_composer-variables
   SECRET_KEY: ${SECRET_KEY:?}
   ALLOWED_HOSTS: ${ALLOWED_HOSTS:-127.0.0.1,localhost}
   CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://127.0.0.1,http://localhost}
-  DB_USER: ${DB_USER:-cap_composer}
-  DB_NAME: ${DB_NAME:-cap_composer}
-  DATABASE_URL: postgis://${DB_USER}:${DB_PASSWORD}@cap_composer_db:5432/${DB_NAME}
+  DATABASE_URL: postgis://cap_composer:${DB_PASSWORD}@cap_composer_db:5432/cap_composer
   REDIS_URL: redis://:${REDIS_PASSWORD:?}@cap_composer_redis:6379/0
   EMAIL_SMTP: ${EMAIL_SMTP:-}
   EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-}
@@ -46,8 +44,8 @@ services:
     restart: unless-stopped
     command: postgres -c max_connections=${POSTGRES_MAX_CONNECTIONS:-300} -c shared_buffers=${POSTGRES_SHARED_BUFFERS:-2GB}
     environment:
-      - POSTGRES_USER=${DB_USER:-cap_composer}
-      - POSTGRES_DB=${DB_NAME:-cap_composer}
+      - POSTGRES_USER=cap_composer
+      - POSTGRES_DB=cap_composer
       - POSTGRES_PASSWORD=${DB_PASSWORD:?}
     ports:
       - "5432"

@@ -39,6 +39,7 @@ echo "DB_PASSWORD=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 20)" >> .env
 echo "REDIS_PASSWORD=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 20)" >> .env
 echo "" >> .env
 # set host directories
+echo "BACKUP_VOLUME_PATH=$1/backup" >> .env
 echo "DB_VOLUME_PATH=$1/db" >> .env
 echo "REDIS_VOLUME_PATH=$1/redis" >> .env
 echo "MEDIA_VOLUME_PATH=$1/media" >> .env
