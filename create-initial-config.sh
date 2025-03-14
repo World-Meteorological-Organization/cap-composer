@@ -47,5 +47,5 @@ echo "STATIC_VOLUME_PATH=$1/static" >> .env
 echo "NPM_VOLUME_PATH=$1/npm" >> .env
 echo "" >> .env
 # set ALLOWED_HOSTS
-echo "ALLOWED_HOSTS=localhost:8080" >> .env
-echo "CSRF_TRUSTED_ORIGINS=http://localhost:8080" >> .env
+echo "ALLOWED_HOSTS=localhost" >> .env
+echo "CSRF_TRUSTED_ORIGINS=http://localhost" >> .env
