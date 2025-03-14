@@ -33,11 +33,10 @@ echo "UID=$(id -u)" > .env
 # get GID from id command
 echo "GID=$(id -g)" >> .env
 echo "" >> .env
-set -o pipefail
 # generate SECRET_KEY
-echo "SECRET_KEY=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 50)" >> .env
-echo "DB_PASSWORD=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 20)" >> .env
-echo "REDIS_PASSWORD=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 20)" >> .env
+echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe(50))')" >> .env
+echo "DB_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_urlsafe(20))')" >> .env
+echo "REDIS_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_urlsafe(20))')" >> .env
 echo "" >> .env
 # set host directories
 echo "BACKUP_VOLUME_PATH=$1/backup" >> .env
