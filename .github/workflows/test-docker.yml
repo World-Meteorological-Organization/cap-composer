@@ -11,6 +11,9 @@ jobs:
     - name: setup environment
       run: |
         source create-initial-config.sh /home/$USER/mydata
+    - name: check directories
+      run: |
+        ls -l /home/$USER/mydata
     - name: docker compose build
       run: |
         docker compose build
@@ -21,8 +24,8 @@ jobs:
         docker ps
     - name: check if the web server is running
       run: |
-        run: |
-        status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8765)
+        curl http://localhost:8080
+        status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
         if [[ $status_code -ne 200 ]]; then
             echo "Request failed with status code:"
             echo ${status_code}
@@ -32,4 +35,4 @@ jobs:
       if: ${{ failure() }}
       run: |
           echo "check docker logs"
-          docker compose -f logs
+          docker compose logs
