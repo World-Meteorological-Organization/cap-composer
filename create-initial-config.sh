@@ -33,6 +33,7 @@ echo "UID=$(id -u)" > .env
 # get GID from id command
 echo "GID=$(id -g)" >> .env
 echo "" >> .env
+set -o pipefail
 # generate SECRET_KEY
 echo "SECRET_KEY=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 50)" >> .env
 echo "DB_PASSWORD=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 20)" >> .env
