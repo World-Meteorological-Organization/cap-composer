@@ -100,4 +100,6 @@ This option will set up a Wagtail project together with the complete components 
    .. image:: ../_static/images/cap_composer_admin.png
       :alt: CAP Composer Wagtail Admin Dashboard
 
-Next proceed with the `Configuration`_ section to finish setting up your CAP Composer.
+Your installation is now complete. 
+
+You can now proceed with the configuration of the Wagtail site and the CAP Composer components, see :ref:`configuration`

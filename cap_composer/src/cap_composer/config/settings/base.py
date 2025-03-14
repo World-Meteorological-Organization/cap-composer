@@ -231,7 +231,7 @@ DBBACKUP_CONNECTORS = {
 }
 
 # Wagtail settings
-WAGTAIL_SITE_NAME = env.str("WAGTAIL_SITE_NAME", "cap_composer")
+WAGTAIL_SITE_NAME = env.str("WAGTAIL_SITE_NAME", "CAP Composer")
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
@@ -356,3 +356,4 @@ AXES_LOCKOUT_TEMPLATE = "axes/lockout.html"
 
 WAGTAIL_2FA_REQUIRED = env.bool("WAGTAIL_2FA_REQUIRED", default=False)
 WAGTAIL_PASSWORD_RESET_ENABLED = env.bool("WAGTAIL_PASSWORD_RESET_ENABLED", default=False)
+WAGTAIL_2FA_OTP_TOTP_NAME = env.str("WAGTAIL_2FA_OTP_TOTP_NAME", default="CAP Composer")
