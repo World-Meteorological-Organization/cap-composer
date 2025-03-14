@@ -74,7 +74,7 @@ This option will set up a Wagtail project together with the complete components 
    In case of any errors, see the troubleshooting section below for some helpful
    tips: `Troubleshooting standalone installation`_
 
-10. **Check the CAP Composer homepage at** ``http://<ip_or_domain>:8080``.
+10. **Check the CAP Composer homepage at** ``http://<your_ip_or_domain>:8080``.
 
    You should see the following page:
 
@@ -85,13 +85,17 @@ This option will set up a Wagtail project together with the complete components 
 
     .. code-block:: shell
 
-       docker compose exec web python manage.py createsuperuser
+       docker compose exec cap_composer cap_composer createsuperuser
 
 13. **Login to the Wagtail admin**
 
-    Visit ``http://<ip_or_domain>:8080/cap_composer/login`` and login with the superuser credentials you created in the previous step.
+   Visit ``http://<your_ip_or_domain>:8080/cap_composer/login`` and you should see the login-page:
+    
+   .. image:: ../_static/images/cap_composer_login.png
+      :alt: CAP Composer Login Page 
 
-    You should see the Wagtail admin page, along with the CAP Composer components:
+   Login with the superuser credentials you created in the previous step.
+   You should see the Wagtail admin page, along with the CAP Composer components:
 
    .. image:: ../_static/images/cap_composer_admin.png
       :alt: CAP Composer Wagtail Admin Dashboard
