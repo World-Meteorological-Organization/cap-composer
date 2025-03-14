@@ -11,12 +11,23 @@ jobs:
     - name: setup environment
       run: |
         source create-initial-config.sh /home/$USER/mydata
-    - name: check directories
+    - name: check .env file exists
       run: |
+        if [ ! -f .env ]; then
+            echo ".env file not found!"
+            exit 1
+        fi
+        less .env
+    - name: check directories were created
+      run: |
+        if [ ! -d /home/$USER/mydata/db ]; then
+            echo "/home/$USER/mydata/db directory not found!"
+            exit 1
+        fi
         ls -l /home/$USER/mydata
     - name: docker compose build
       run: |
-        docker compose build
+        docker compose -f docker-compose.yml --env-file .env build
     - name: docker compose up, sleep 60 seconds and check status
       run: |
         docker compose up -d
