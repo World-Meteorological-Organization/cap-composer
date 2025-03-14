@@ -12,7 +12,7 @@ jobs:
       run: |
         source create-initial-config.sh /home/$USER/mydata
         cp docker-compose.sample.yml docker-compose.yml
-        cp nginx/nginx.sample.conf nginx/nginx.conf
+        cp nginx/nginx.conf.sample nginx/nginx.conf
     - name: check .env file exists after setup
       run: |
         if [ ! -f .env ]; then
