@@ -95,13 +95,15 @@ This option will set up a Wagtail project together with the complete components 
    .. image:: ../_static/images/cap_composer_homepage.png
       :alt: WMO CAP Composer Homepage
 
-   If you see the message **Bad Request (400)**, check the logs for the ``cap_composer`` container for any errors:
+   If you the message **502 Bad Gateway**, wait a few seconds and refresh the page as the containers are still starting.
+
+   If you see the message **Bad Request (400)** or **Forbidden (403)**, check the logs for the ``cap_composer`` container for any errors:
 
    .. code-block:: shell
 
       docker logs cap_composer
 
-   The logs might indicate that `ALLOWED_HOSTS` is not set correctly in the .env file.
+   The logs might indicate that `ALLOWED_HOSTS` or `CSRF_TRUSTED_ORIGINS` is not set correctly.
    If so update the .env file and restart the docker containers:
 
    .. code-block:: shell
