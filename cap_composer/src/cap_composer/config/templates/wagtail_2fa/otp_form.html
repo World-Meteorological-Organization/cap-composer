@@ -5,7 +5,10 @@
 
 {% block furniture %}
     <main class="content-wrapper" id="main">
-        <h1>{% block branding_login %}{% trans "Enter your two-factor authentication code" %}{% endblock %}</h1>
+        <!--<h1>{% block branding_login %}{% trans "Enter your two-factor authentication code" %}{% endblock %}</h1>-->
+        {% block branding_login %}
+            Please enter your two-factor authentication code
+        {% endblock %}
 
         <div class="messages" role="status">
             {# Always show messages div so it can be appended to by JS #}
@@ -52,10 +55,12 @@
         {% block below_login %}{% endblock %}
 
         {% block branding_logo %}
-            <figure style="max-height: 100px;max-width: 100px;padding: 8px">
-                <img src="{% static 'images/cap-composer_white.png' %}" alt="CAP Composer Dashboard Logo"
-                    style="height: 100%;width: 100%;object-fit: contain"/>
+        <div style="display: flex;justify-content: center;margin-top: 20px">
+            <figure style="max-height: 80px;max-width: 80px;">
+                <img src="{% static 'images/cap-composer_red.png' %}" alt="cap_composer Logo"
+                     style="height: 100%;width: 100%;object-fit: contain"/>
             </figure>
+        </div>
         {% endblock %}
     </main>
 {% endblock %}

@@ -47,6 +47,7 @@ services:
       - POSTGRES_USER=cap_composer
       - POSTGRES_DB=cap_composer
       - POSTGRES_PASSWORD=${DB_PASSWORD:?}
+    user: "${UID}:${GID}"
     ports:
       - "5432"
     healthcheck:
