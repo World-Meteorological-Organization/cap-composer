@@ -5,10 +5,7 @@
 
 {% block furniture %}
     <main class="content-wrapper" id="main">
-        <!--<h1>{% block branding_login %}{% trans "Enter your two-factor authentication code" %}{% endblock %}</h1>-->
-        {% block branding_login %}
-            Please enter your two-factor authentication code
-        {% endblock %}
+        <h1>{% block branding_login %}{% trans "Enter your two-factor authentication code" %}{% endblock %}</h1>
 
         <div class="messages" role="status">
             {# Always show messages div so it can be appended to by JS #}
