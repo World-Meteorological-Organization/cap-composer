@@ -37,8 +37,7 @@ It contains the following entities required for a valid CAP message:
 
 The alert identifier is generated automatically and is not editable.
 
- **NOTE:**
-Some fields are visible based on selection of different parameters.
+ **NOTE: Some fields are visible based on selection of different parameters.**
 
 .. image:: ../_static/images/cap_composer_alert_identification.png
       :alt: WMO CAP Composer Alert Identification
@@ -51,7 +50,7 @@ one *info* block is required for an alert.
 
 Each *info* block contains the following elements:
 
-- Langauge (langauge)
+- Language (language)
 - Event Type (event)
 - Response Type/Types (responseType)
 - Urgency (urgency)
