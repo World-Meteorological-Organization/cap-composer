@@ -33,14 +33,11 @@ Predefined Areas
 
 Here you can create a list of common regions that are known to experience alerts. This will save you time so that you do not have to draw the same area each time for new alerts. 
 
-.. image:: ../_static/images/cap_composer_predefined_areas.png
-      :alt: WMO CAP Composer Predefined Areas
-
  **NOTE:**
- 
  While drawing a boundary, if the area falls out of the UN Boundaries set, a warning and button will appear to snap the area back to the UN Boundaries. Snapping boundaries back to the UN Boundary ensures that the CAP Alert is displayed on Severe Weather and Information Centre (SWIC) platform.
 
-
+.. image:: ../_static/images/cap_composer_predefined_areas.png
+      :alt: WMO CAP Composer Predefined Areas
 
 Languages
 -----------
