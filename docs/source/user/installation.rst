@@ -1,4 +1,4 @@
-## Installation
+Installation
 ============
 
 The WMO CAP Composer can be installed in two ways:
@@ -8,7 +8,7 @@ The WMO CAP Composer can be installed in two ways:
 
 The following sections provide instructions on how to install the WMO CAP Composer as a standalone project using a docker-compose stack.
 
-## Standalone Installation
+Standalone Installation
 -----------------------
 
 This option will set up a Wagtail project together with the complete components required to run the WMO CAP Composer.

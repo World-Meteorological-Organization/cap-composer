@@ -1,9 +1,10 @@
-## Configuration
+Configuration
 =============
 
 These are common details that are repeated across the CAP Composer tool and are set only once.
 
-## Sender Details
+Sender Details
+--------------
 
 These include:
 
@@ -18,7 +19,8 @@ These include:
 
 ---
 
-## Hazard Types
+Hazard Types
+--------------
 
 Here the NMHSs input the different types of hazards they monitor. They can select the hazards from a WMO predefined list of hazards or create a new custom hazard/event type. Each hazard type can be associated with an Icon, a Category and an Event Code
 
@@ -27,21 +29,24 @@ Here the NMHSs input the different types of hazards they monitor. They can selec
 
 ---
 
-## Predefined Areas
+Predefined Areas
+----------------
 
-Here you can create a list of common regions that are know to experience alerts. This will save you time so that you do not have to draw the same area each time for new alerts. 
+Here you can create a list of common regions that are known to experience alerts. This will save you time so that you do not have to draw the same area each time for new alerts. 
 
 .. image:: ../_static/images/cap_composer_predefined_areas.png
       :alt: WMO CAP Composer Predefined Areas
 
-> **_NOTE:_** 
->
-> While drawing a boundary, if the area falls out of the UN Boundaries set, a warning and button will appear to snap the area back to the UN Boundaries. Snapping boundaries back to the UN Boundary ensures that the CAP Alert is displayed on Severe Weather and Information Centre (SWIC) platform. To set up UN Boundaries, refer to [Setting up UN Boundary](#un-boundary) section.
+ NOTE:
+ ^^^^^
+
+ While drawing a boundary, if the area falls out of the UN Boundaries set, a warning and button will appear to snap the area back to the UN Boundaries. Snapping boundaries back to the UN Boundary ensures that the CAP Alert is displayed on Severe Weather and Information Centre (SWIC) platform. To set up UN Boundaries, refer to [Setting up UN Boundary](#un-boundary) section.
 
 
 ---
 
-## Languages
+Languages
+-----------
 
 To add one or more languages, the Language code such as es and Language name such as Spanish. This languages will be useful when creating multiple Alert Infos for a CAP Alert where one alert info corresponds to another one Alert info by its translated language.
 
@@ -50,14 +55,16 @@ To add one or more languages, the Language code such as es and Language name suc
 
 ---
 
-## UN Boundary
+UN Boundary
+--------------
 
 This section allows you to upload a GeoJSON file of the UN Country Boundary. Setting this will enable the UN Country Boundary check in the alertdrawing tools.
 
 .. image:: ../_static/images/cap_composer_un_boundaries.png
       :alt: WMO CAP Composer UN Boundaries
 
-## Other Settings
+Other Settings
+---------------
 
 Here you can limit the number of CAP Alerts that can are displayed at the same time on the website, reducing it will help to improve performance.
 
