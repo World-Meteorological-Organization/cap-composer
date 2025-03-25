@@ -1,4 +1,4 @@
-Installation
+## Installation
 ============
 
 The WMO CAP Composer can be installed in two ways:
@@ -8,7 +8,7 @@ The WMO CAP Composer can be installed in two ways:
 
 The following sections provide instructions on how to install the WMO CAP Composer as a standalone project using a docker-compose stack.
 
-Standalone Installation
+## Standalone Installation
 -----------------------
 
 This option will set up a Wagtail project together with the complete components required to run the WMO CAP Composer.
@@ -17,13 +17,13 @@ This option will set up a Wagtail project together with the complete components 
 
    .. code-block:: shell
 
-      git clone https://github.com/World-Meteorological-Organization/cap_composer.git
+      git clone https://github.com/World-Meteorological-Organization/cap-composer.git
 
 2. **Change into the project directory**
 
    .. code-block:: shell
 
-      cd cap_composer
+      cd cap-composer
 
 3. **Create an initial .env file and required host data directories**
 
@@ -132,7 +132,7 @@ This option will set up a Wagtail project together with the complete components 
 
 Your installation is now complete. 
 
-You can now proceed with the configuration of the Wagtail site and the CAP Composer components, see :ref:`configuration`
+You can now proceed with the configuration of the Wagtail site and the CAP Composer components.
 
 Please note that you should not expose port 8080 of your host on the public internet. 
 
