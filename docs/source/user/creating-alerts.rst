@@ -142,5 +142,3 @@ This defines the reference incident to the current alert, if any.
 
 .. image:: ../_static/images/cap_composer_alert_incidents.png
       :alt: WMO CAP Composer Alert Incidents Section
-
----
