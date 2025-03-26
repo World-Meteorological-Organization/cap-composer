@@ -26,14 +26,13 @@ The general process for setting up Composer and Approver roles involves the foll
 
 
 2. *Define Roles and Permissions:*
-   - Click on groups
-   - Create roles/groups titled "Composer" and "Approver."
+- Click on groups
+- Create roles/groups titled "Composer" and "Approver."
 
    .. image:: ../_static/images/cap_composer_groups.png
       :alt: WMO CAP Composer Sender Details
-
-   - Assign permissions to each role based on their responsibilities:
-     - *Composer:* Permissions to create and edit alerts but not to publish them.
+- Assign permissions to each role based on their responsibilities:
+- *Composer:* Permissions to create and edit alerts but not to publish them.
 
 .. image:: ../_static/images/cap_composer_composer_1.png
       :alt: WMO CAP Composer Composer Role
@@ -41,7 +40,8 @@ The general process for setting up Composer and Approver roles involves the foll
 .. image:: ../_static/images/cap_composer_composer_2.png
       :alt: WMO CAP Composer Composer Role
 
-     - *Approver:* Permissions to review, approve, or reject alerts, and to publish approved alerts.
+
+- *Approver:* Permissions to review, approve, or reject alerts, and to publish approved alerts.
 
 .. image:: ../_static/images/cap_composer_approver_1.png
       :alt: WMO CAP Composer Approver Role
