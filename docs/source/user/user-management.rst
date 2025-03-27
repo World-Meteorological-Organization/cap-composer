@@ -1,26 +1,26 @@
 
-CAP Composer and Approver Roles and Publishing Workflows
-========================================================
+Creating Groups and Users
+=========================
 
-Within CAP, roles such as "Composer" and "Approver" are essential to ensure the accuracy and authorization of alerts before dissemination.
+When using the CAP Composer for alert creation and dissemination, it is essential to establish roles and permissions for users to ensure that alerts are accurate, authorized, and disseminated effectively.
 
-CAP Composer Role:
-------------------
+At a minimum, two key roles are required for the alert creation and approval process:
 
-A CAP Composer is responsible for creating and drafting alert messages. This role involves collecting pertinent information about an incident and structuring it according to the CAP format. The Composer ensures that all necessary details are included to inform the public or specific agencies effectively.
+- **CAP Composer Role:** A CAP Composer is responsible for creating and drafting alert messages. This role involves collecting pertinent information about an incident and structuring it according to the CAP format. The Composer ensures that all necessary details are included to inform the public or specific agencies effectively.
+- **CAP Approver Role:** The CAP Approver reviews the alerts composed by the Composer. This role is crucial for validating the content, ensuring compliance with organizational protocols, and authorizing the release of the alert to the intended audience. The Approver acts as a quality control measure to prevent the dissemination of incorrect or unauthorized information.
 
-CAP Approver Role:
-------------------
+You will need to create `Groups` for each role and assign users to these groups based on their responsibilities using the Wagtail Admin interface.
 
-The CAP Approver reviews the alerts composed by the Composer. This role is crucial for validating the content, ensuring compliance with organizational protocols, and authorizing the release of the alert to the intended audience. The Approver acts as a quality control measure to prevent the dissemination of incorrect or unauthorized information.
+This section provides guidance on configuring Composer and Approver groups in the CAP Composer.	
 
-Configuring Composer and Approver Roles:
-----------------------------------------
+Configuring Composer and Approver Groups
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The general process for setting up Composer and Approver roles involves the following steps:
+The general process for setting up Composer and Approver groups involves the following steps:
 
 1. *Access the User Management or Administration Section:*
    - Navigate to the system's settings where users and groups are managed. 
+
 .. image:: ../_static/images/cap_composer_user_settings.png
       :alt: WMO CAP Composer User Settings
 
@@ -31,7 +31,9 @@ The general process for setting up Composer and Approver roles involves the foll
 
    .. image:: ../_static/images/cap_composer_groups.png
       :alt: WMO CAP Composer Sender Details
+
 - Assign permissions to each role based on their responsibilities:
+
     - *Composer:* Permissions to create and edit alerts but not to publish them.
 
         .. image:: ../_static/images/cap_composer_composer_1.png
@@ -49,13 +51,11 @@ The general process for setting up Composer and Approver roles involves the foll
         .. image:: ../_static/images/cap_composer_approver_2.png
             :alt: WMO CAP Composer Approver Role
 
+      **Note: Ensure to enable 2Factor authentication for the Approver role**
+
 
 3. *Assign Users to Roles:*
    - Allocate users to the Composer and Approver roles based on their job functions and expertise.
-
-**Note: Ensure to enable 2Factor authenitcation for the Approver role**
-
-
 
 
 4. *Implement Approval Workflows:*
@@ -66,7 +66,7 @@ The general process for setting up Composer and Approver roles involves the foll
 
 
 User management
-===============
+---------------
 
 Users are created and managed in the CAP Composer to facilitate collaboration and assign roles for composing, reviewing, and approving alerts.
 
@@ -79,8 +79,8 @@ To create a new user in the CAP Composer after selecting Users in the Settings c
       :alt: WMO CAP Composer Add User
 
 
-Role Assignment
----------------
+Group Assignment
+----------------
 
 Roles are assigned by using the groups defined in the steps detailed before, one of these groups that is defined by default is the Admin group.
 

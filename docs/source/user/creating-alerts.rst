@@ -1,27 +1,26 @@
 Creating and Issuing Alerts
 ===========================
 
-This sections should describe how to draft alerts, review them, and publish them as pages on the website.
-
-This page could also describe the different dissemination channels that the CAP Composer can use to send alerts to the public.
-
 To create a CAP Alert access the CAP composing interface from the explorer menu as below and add a new cap alert page:
 
 .. image:: ../_static/images/cap_composer_alert_page.png
       :alt: WMO CAP Composer Alert Page
 
+How to compose a CAP Alert
+--------------------------
 
+A CAP Alert is composed of the following sections:
 
-Sections in the Alert Page and corresponding XML
-===================================================
-
-The overall Document Object Model of an alert is as below:
-
-.. image:: ../_static/images/cap_composer_cap_dom.jpg
-      :alt: CAP Document Object Model
+- Alert Identification
+- Alert Information
+- Alert Area
+- Alert Resource
+- Additional CAP Inputs
+- Incidents
 
 Alert Identification
----------------------
+^^^^^^^^^^^^^^^^^^^^
+
 It contains the following entities required for a valid CAP message:
 
 - Sender ID(sender),
@@ -43,7 +42,7 @@ The alert identifier is generated automatically and is not editable.
       :alt: WMO CAP Composer Alert Identification
 
 Alert Information
-------------------
+^^^^^^^^^^^^^^^^^
 
 Corresponds to the *info* element in the CAP message. The *info* entity specifies the alert's details. At least
 one *info* block is required for an alert.
@@ -71,7 +70,7 @@ Each *info* block contains the following elements:
       :alt: WMO CAP Composer Alert Information
 
 Alert Area
-^^^^^^^^^^^
+^^^^^^^^^^
 
 Information Entity that defines the geographic area to be notified. Multiple areas can be defined in the alert. Each
 area contains the following elements:
@@ -112,7 +111,7 @@ The Alert area input has 4 selector options:
 
 
 Alert Resource
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 
 Entity that defines supplemental information related to an *info* object Multiple instances of this section are allowed.
 It contains:
@@ -135,9 +134,14 @@ Additional CAP Inputs
 Addition alert information elements include parameters and event codes
 
 Incidents
-----------
+^^^^^^^^^
 
 This defines the reference incident to the current alert, if any.
 
 .. image:: ../_static/images/cap_composer_alert_incidents.png
       :alt: WMO CAP Composer Alert Incidents Section
+
+Review and Approval
+-------------------
+
+After drafting the alert, it should be reviewed by an approver before it is published. The approver should ensure that the alert is accurate and complete before approving it for publication.

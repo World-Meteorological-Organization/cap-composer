@@ -31,6 +31,6 @@ The user guide provides information on how to install and configure the WMO CAP 
 Contributing
 ============
 
-The WMO CAP Composer source code is available on `GitHub <github.com/World-Meteorological-Organization/cap-composer>`_. 
+The WMO CAP Composer source code is available on `GitHub <https://github.com/World-Meteorological-Organization/cap-composer>`_. 
 
 Contributions to the project (documentation, bug fixes, enhancements, tests, etc.) are welcome and encouraged.

@@ -1,5 +1,5 @@
-Configuration
-=============
+CAP Base Settings
+=================
 
 These are common details that are repeated across the CAP Composer tool and are set only once per country.
 

@@ -65,7 +65,7 @@ This option will set up a Wagtail project together with the complete components 
 
       docker compose up -d
 
-9. **Check if the docker container are starting **
+9. **Check if the docker container are starting**
 
    .. code-block:: shell
 
@@ -136,4 +136,4 @@ You can now proceed with the configuration of the Wagtail site and the CAP Compo
 
 Please note that you should not expose port 8080 of your host on the public internet. 
 
-To make your CAP Composer available over the public internet, see :ref:`securing-your-installation`.
+To make your CAP Composer available over the public internet, see "Securing your installation" in this documentation.
