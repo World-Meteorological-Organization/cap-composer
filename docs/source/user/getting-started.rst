@@ -11,15 +11,27 @@ The standalone version of the CAP Composer is a complete Wagtail project that in
 
 If you already have a Wagtail project and would like to integrate the CAP Composer components, you can install the CAP Composer as a set of Wagtail apps.
 
-Host requirements for the standalone version
---------------------------------------------
+Host requirements for standalone CAP Composer
+---------------------------------------------
 
-The CAP Composer host requires a minimum of 4 vCPUs with 4GB Memory and 24GB of local storage.
+The standalone CAP Composer host requires a minimum of 4 vCPUs with 4GB Memory and 24GB of local storage.
 
 The following software dependencies are required:
 
-* Docker
-* Docker Compose
+- Docker
+- Docker Compose
 
+The following ports are used by the docker compose stack and should not be used by other services on the host:
+
+- 8000 (CAP Composer)
+- 80 (CAP Composer web proxy)
+- 81 (Nginx Proxy Manager)
+- 443 (SSL)
+- 5432 (Postgres)
+
+If you want to use different ports, you can modify the docker-compose.yml file during the installation process.
+
+To run the CAP Composer in a production environment the server should have a public IP address and a domain name. Only port 443 and 80 should be open to the public.
+You will need to configure DNS to point to the IP address of your server, after which you can setup SSL using the Nginx Proxy Manager.
 
 

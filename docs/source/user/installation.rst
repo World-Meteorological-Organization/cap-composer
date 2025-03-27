@@ -17,13 +17,13 @@ This option will set up a Wagtail project together with the complete components 
 
    .. code-block:: shell
 
-      git clone https://github.com/World-Meteorological-Organization/cap_composer.git
+      git clone https://github.com/World-Meteorological-Organization/cap-composer.git
 
 2. **Change into the project directory**
 
    .. code-block:: shell
 
-      cd cap_composer
+      cd cap-composer
 
 3. **Create an initial .env file and required host data directories**
 
@@ -65,7 +65,7 @@ This option will set up a Wagtail project together with the complete components 
 
       docker compose up -d
 
-9. **Check if the docker container are starting **
+9. **Check if the docker container are starting**
 
    .. code-block:: shell
 
@@ -95,13 +95,15 @@ This option will set up a Wagtail project together with the complete components 
    .. image:: ../_static/images/cap_composer_homepage.png
       :alt: WMO CAP Composer Homepage
 
-   If you see the message **Bad Request (400)**, check the logs for the ``cap_composer`` container for any errors:
+   If you the message **502 Bad Gateway**, wait a few seconds and refresh the page as the containers are still starting.
+
+   If you see the message **Bad Request (400)** or **Forbidden (403)**, check the logs for the ``cap_composer`` container for any errors:
 
    .. code-block:: shell
 
       docker logs cap_composer
 
-   The logs might indicate that `ALLOWED_HOSTS` is not set correctly in the .env file.
+   The logs might indicate that `ALLOWED_HOSTS` or `CSRF_TRUSTED_ORIGINS` is not set correctly.
    If so update the .env file and restart the docker containers:
 
    .. code-block:: shell
@@ -130,8 +132,8 @@ This option will set up a Wagtail project together with the complete components 
 
 Your installation is now complete. 
 
-You can now proceed with the configuration of the Wagtail site and the CAP Composer components, see :ref:`configuration`
+You can now proceed with the configuration of the Wagtail site and the CAP Composer components.
 
 Please note that you should not expose port 8080 of your host on the public internet. 
 
-To make your CAP Composer available over the public internet, see :ref:`securing-your-installation`.
+To make your CAP Composer available over the public internet, see "Securing your installation" in this documentation.
