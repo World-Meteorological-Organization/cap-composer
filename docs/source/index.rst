@@ -27,6 +27,7 @@ The user guide provides information on how to install and configure the WMO CAP 
    user/cap-base-settings
    user/user-management
    user/creating-alerts
+   user/forwarding-cap-to-WIS2
 
 Contributing
 ============
