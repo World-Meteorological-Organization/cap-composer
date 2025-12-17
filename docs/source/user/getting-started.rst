@@ -14,7 +14,7 @@ If you already have a Wagtail project and would like to integrate the CAP Compos
 Host requirements for standalone CAP Composer
 ---------------------------------------------
 
-The standalone CAP Composer host requires a minimum of 4 vCPUs with 4GB Memory and 24GB of local storage.
+The standalone CAP Composer host requires a minimum of 4 vCPUs with 8 GB Memory and 24GB of local storage.
 
 The following software dependencies are required:
 
