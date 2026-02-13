@@ -32,4 +32,4 @@ The WMO CAP Composer was developed by the following [NORCAP](https://www.nrc.no/
 Support for the standalone version deployment outside of Africa is provided by
 
 - [Maaike Limper](https://github.com/maaikelimper)
-- [Alberto Helguera](https://github.com/ahelguera)
+- [Alberto Helguera](https://github.com/alhelguera)
