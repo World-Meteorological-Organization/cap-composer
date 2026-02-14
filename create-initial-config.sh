@@ -35,7 +35,12 @@ echo "GID=$(id -g)" >> .env
 echo "" >> .env
 # generate SECRET_KEY
 echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe(50))')" >> .env
+# set DB_USER and DB_NAME
+echo "DB_USER=cap_composer" >> .env
+echo "DB_NAME=cap_composer" >> .env
+# generate DB_PASSWORD
 echo "DB_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_urlsafe(20))')" >> .env
+# generate REDIS_PASSWORD
 echo "REDIS_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_urlsafe(20))')" >> .env
 echo "" >> .env
 # set host directories
