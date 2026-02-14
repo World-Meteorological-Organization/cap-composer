@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('username', models.CharField(max_length=255, verbose_name='Broker Username')),
                 ('new_password', models.CharField(blank=True, help_text='Enter a new password to update the stored password', max_length=255, verbose_name='Broker Password')),
                 ('password', models.CharField(max_length=255)),
-                ('is_wis2box', models.BooleanField(default=False, help_text='Check this box if you are providing the broker details of a wis2box.', verbose_name='Is wis2box Node')),
+                ('is_wis2box', models.BooleanField(default=False, help_text='Check this box if you are providing the broker details of a wis2box.', verbose_name='Is WIS2Box Node')),
                 ('topic', models.CharField(help_text='Provide the MQTT topic to publish the CAP alerts.', max_length=255, verbose_name='Topic')),
                 ('wis2box_metadata_id', models.CharField(blank=True, help_text='Provide the metadata ID for your dataset registered in the wis2box. If you do not have this, please create a dataset in the wis2box before proceeding.', max_length=255, verbose_name='Dataset ID')),
                 ('active', models.BooleanField(default=True, help_text='Automatically publish CAP alerts to this broker', verbose_name='Active')),

@@ -25,7 +25,7 @@ def disable_instrumentation(wrapped_function):
 
 
 # attrs don't include the module name to keep them short and easier to see so we add manually.
-OTEL_TRACE_ATTR_PREFIX = "cap_composer."
+OTEL_TRACE_ATTR_PREFIX = "capcomposer."
 
 
 class BatchBaggageSpanProcessor(BatchSpanProcessor):
@@ -57,7 +57,7 @@ def setup_user_in_baggage_and_spans(user, request):
         _set("user.token_id", "user_token.id", request)
 
 
-def _cap_composer_trace_func(wrapped_func, tracer: Tracer):
+def _app_trace_func(wrapped_func, tracer: Tracer):
     @functools.wraps(wrapped_func)
     def _wrapper(*args, **kwargs):
         with tracer.start_as_current_span(
@@ -75,7 +75,7 @@ def _cap_composer_trace_func(wrapped_func, tracer: Tracer):
     return _wrapper
 
 
-def cap_composer_trace_methods(
+def app_trace_methods(
         tracer: Tracer,
         only: Optional[Union[str, List[str]]] = None,
         exclude: Optional[Union[str, List[str]]] = None,
@@ -117,7 +117,7 @@ def cap_composer_trace_methods(
                     continue
                 value = local[attr]
                 if inspect.isfunction(value):
-                    local[attr] = _cap_composer_trace_func(value, tracer)
+                    local[attr] = _app_trace_func(value, tracer)
             return super().__new__(cls, name, bases, local)
         
         @staticmethod
@@ -131,7 +131,7 @@ def cap_composer_trace_methods(
     return TraceMethodsMetaClass
 
 
-def cap_composer_trace(tracer):
+def app_trace(tracer):
     """
     Decorates a function to send a span of its execution. This will let you see how
     long the function took in your telemetry platform.
@@ -149,18 +149,18 @@ def cap_composer_trace(tracer):
         )
     
     def inner(wrapped_function_or_cls):
-        return _cap_composer_trace_func(wrapped_function_or_cls, tracer)
+        return _app_trace_func(wrapped_function_or_cls, tracer)
     
     return inner
 
 
-def add_cap_composer_trace_attrs(**kwargs):
+def add_app_trace_attrs(**kwargs):
     """
     Simple helper function for quickly adding attributes to the current span. The
-    attribute names will be prefixed with cap_composer. to namespace them properly.
+    attribute names will be prefixed with capcomposer. to namespace them properly.
 
     :param kwargs: Key value pairs, the key will be the attr name prefixed with
-        cap_composer. and the value will be the span attribute value.
+        capcomposer. and the value will be the span attribute value.
     """
     
     span = get_current_span()
@@ -172,6 +172,6 @@ def otel_is_enabled():
     env_var_set = bool(os.getenv("CAP_COMPOSER_ENABLE_OTEL", False))
     not_in_tests = (
             os.getenv("DJANGO_SETTINGS_MODULE", "").strip()
-            != "cap_composer.config.settings.test"
+            != "capcomposer.config.settings.test"
     )
     return env_var_set and not_in_tests

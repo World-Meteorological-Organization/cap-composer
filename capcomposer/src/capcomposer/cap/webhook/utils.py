@@ -1,12 +1,12 @@
 import logging
 
+from requests import Session
+from requests.exceptions import RequestException
+
 from capcomposer.cap.utils import (
     serialize_and_sign_cap_alert
 )
 from capcomposer.utils import get_object_or_none
-from requests import Session
-from requests.exceptions import RequestException
-
 from .http import prepare_request
 
 

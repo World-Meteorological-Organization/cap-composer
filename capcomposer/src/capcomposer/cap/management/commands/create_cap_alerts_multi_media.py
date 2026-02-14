@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
 from capcomposer.cap.models import CapAlertPage
 from capcomposer.cap.utils import create_cap_alert_multi_media
-from django.db.models import Q
 
 
 class Command(BaseCommand):

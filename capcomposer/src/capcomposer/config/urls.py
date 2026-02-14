@@ -6,16 +6,16 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 
-from capcomposer.config.views import humans
+from .views import humans
 
-handler500 = 'cap_composer.config.views.handler500'
+handler500 = 'capcomposer.config.views.handler500'
 
 ADMIN_URL_PATH = getattr(settings, "ADMIN_URL_PATH", None)
 DJANGO_ADMIN_URL_PATH = getattr(settings, "DJANGO_ADMIN_URL_PATH", None)
 
 urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
-    path("", include("cap_composer.cap.urls")),
+    path("", include("capcomposer.cap.urls")),
     path("", include("adminboundarymanager.urls")),
     path("sitemap.xml", sitemap),
     path("humans.txt", humans),

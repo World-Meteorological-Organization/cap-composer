@@ -34,7 +34,7 @@
 
     {# Global stylesheets #}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/cap_composer.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cap-composer.css' %}">
 
     {% block extra_css %}
         {# Override this in templates to add extra stylesheets #}
@@ -52,13 +52,13 @@
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="cap_composer-footer">
+    <footer class="cap-composer-footer">
         {% include 'footer.html' %}
     </footer>
 </div>
 
 {# Global javascript #}
-<script type="text/javascript" src="{% static 'js/cap_composer.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/cap-composer.js' %}"></script>
 
 
 <script async defer src="https://buttons.github.io/buttons.js"></script>

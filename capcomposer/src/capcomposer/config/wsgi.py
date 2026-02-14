@@ -13,7 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 from capcomposer.config.telemetry.telemetry import setup_telemetry, setup_logging
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cap_composer.config.settings.dev")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "capcomposer.config.settings.dev")
 
 # The telemetry instrumentation library setup needs to run prior to django's setup.
 setup_telemetry(add_django_instrumentation=True)

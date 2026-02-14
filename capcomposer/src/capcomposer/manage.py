@@ -4,7 +4,7 @@ import sys
 
 
 def main():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cap_composer.config.settings.dev")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "capcomposer.config.settings.dev")
     
     from django.core.management import execute_from_command_line
     

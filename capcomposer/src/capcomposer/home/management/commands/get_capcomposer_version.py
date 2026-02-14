@@ -4,7 +4,7 @@ from capcomposer.utils.version import get_complete_version, get_semver_version
 
 
 class Command(BaseCommand):
-    help = "Get cap_composer version"
+    help = "Get CAPComposer version"
     
     def handle(self, *args, **options):
         complete_version = get_complete_version()

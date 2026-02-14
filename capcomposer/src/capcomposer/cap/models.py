@@ -1,19 +1,14 @@
-import json
 import logging
 
-from capcomposer.capeditor.cap_settings import CapSetting
-from capcomposer.capeditor.models import AbstractCapAlertPage, CapAlertPageForm
 from django.conf import settings
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _, gettext
-from shapely.geometry import shape
-from shapely.ops import unary_union
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.api.v2.utils import get_full_url
@@ -21,21 +16,18 @@ from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.documents import get_document_model
 from wagtail.images import get_image_model
-from wagtail.models import Page
+from wagtail.models import Page, PreviewableMixin
 from wagtail.signals import page_published
+from wagtail_newsletter.models import NewsletterPageMixin
 
+from capcomposer.capeditor.cap_settings import CapSetting
+from capcomposer.capeditor.models import AbstractCapAlertPage, CapAlertPageForm
 from .external_feed.models import ExternalAlertFeed, ExternalAlertFeedEntry
 from .mixins import MetadataPageMixin
 from .mqtt.models import CAPAlertMQTTBroker, CAPAlertMQTTBrokerEvent
-from .mqtt.publish import publish_cap_to_all_mqtt_brokers
 from .permissions import CAPMenuPermission
-from .utils import (
-    get_cap_map_style,
-    get_all_published_alerts,
-    create_cap_alert_multi_media
-)
+from .utils import get_all_published_alerts
 from .webhook.models import CAPAlertWebhook, CAPAlertWebhookEvent
-from .webhook.utils import fire_alert_webhooks
 
 __all__ = [
     "CapAlertListPage",
@@ -52,14 +44,14 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
-MAX_CAP_LIST_PAGE_COUNT = getattr(settings, "MAX_CAP_LIST_PAGE_COUNT", None)
+CAP_MAX_LIST_PAGE_COUNT = getattr(settings, "CAP_MAX_LIST_PAGE_COUNT", None)
 CAP_LIST_PAGE_PARENT_PAGE_TYPES = getattr(settings, "CAP_LIST_PAGE_PARENT_PAGE_TYPES", None)
 
 
 class CapAlertListPage(MetadataPageMixin, Page):
     template = "cap/alert_list.html"
     subpage_types = ["cap.CapAlertPage"]
-    max_count = MAX_CAP_LIST_PAGE_COUNT
+    max_count = CAP_MAX_LIST_PAGE_COUNT
     
     parent_page_types = CAP_LIST_PAGE_PARENT_PAGE_TYPES
     
@@ -253,11 +245,9 @@ class CapPageForm(CapAlertPageForm):
         return super().save(commit=commit)
 
 
-class CapAlertPage(MetadataPageMixin, AbstractCapAlertPage):
+class CapAlertPage(MetadataPageMixin, NewsletterPageMixin, AbstractCapAlertPage):
     base_form_class = CapPageForm
-    
     template = "cap/alert_detail.html"
-    
     parent_page_types = ["cap.CapAlertListPage"]
     subpage_types = []
     
@@ -277,14 +267,21 @@ class CapAlertPage(MetadataPageMixin, AbstractCapAlertPage):
         blank=True,
         related_name='+',
     )
+    imported = models.BooleanField(default=False, verbose_name=_("Imported"))
     
     content_panels = Page.content_panels + [
         *AbstractCapAlertPage.content_panels,
     ]
     
+    newsletter_template = "cap/alert_detail_email.html"
+    
     class Meta:
         ordering = ["-sent"]
         verbose_name = _("CAP Alert")
+    
+    @property
+    def has_png_and_pdf(self):
+        return self.alert_area_map_image and self.alert_pdf_preview
     
     @property
     def display_title(self):
@@ -296,6 +293,21 @@ class CapAlertPage(MetadataPageMixin, AbstractCapAlertPage):
         return self.display_title
     
     @property
+    def preview_modes(self):
+        custom_modes = [
+            ("pdf", _("PDF")),
+            ("newsletter", _("Email")),
+        ]
+        return PreviewableMixin.DEFAULT_PREVIEW_MODES + custom_modes
+    
+    def get_preview_template(self, request, mode_name):
+        templates = {
+            "": "cap/alert_detail.html",  # Default preview mode
+            "pdf": "cap/alert_detail_pdf.html",  # PDF preview mode
+        }
+        return templates.get(mode_name, templates[""])
+    
+    @property
     def is_published_publicly(self):
         return self.live and self.status == "Actual" and self.scope == "Public"
     
@@ -303,7 +315,11 @@ class CapAlertPage(MetadataPageMixin, AbstractCapAlertPage):
         return self.display_title
     
     def get_meta_description(self):
-        info = self.info[0]
+        info = self.info[0] if self.info else None
+        
+        if not info:
+            return None
+        
         description = info.value.get("description")
         
         if description:
@@ -331,30 +347,6 @@ class CapAlertPage(MetadataPageMixin, AbstractCapAlertPage):
         alerts = sorted(alerts, key=lambda x: x.sent)
         
         return alerts
-    
-    @property
-    def mbgl_renderer_payload(self):
-        features = self.get_geojson_features()
-        shapely_polygons = [shape(feature["geometry"]) for feature in features]
-        combined = unary_union(shapely_polygons)
-        bounding_box = list(combined.bounds)
-        
-        geojson = {
-            "type": "FeatureCollection",
-            "features": features
-        }
-        
-        style = get_cap_map_style(geojson)
-        
-        payload = {
-            "width": 400,
-            "height": 400,
-            "padding": 6,
-            "style": style,
-            "bounds": bounding_box,
-        }
-        
-        return json.dumps(payload, cls=DjangoJSONEncoder)
     
     def get_geojson_features(self, request=None):
         features = []
@@ -391,9 +383,18 @@ class CapAlertPage(MetadataPageMixin, AbstractCapAlertPage):
         features = sorted(features, key=lambda x: x.get("order"))
         return features
     
+    def get_cap_setting_context(self):
+        site = self.get_site()
+        cap_setting = CapSetting.for_site(site)
+        
+        return {
+            "org_logo": cap_setting.logo,
+            "sender_name": cap_setting.sender_name,
+            "sender_contact": cap_setting.sender,
+        }
+    
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        cap_setting = CapSetting.for_request(request)
         
         other_cap_settings = OtherCAPSettings.for_request(request)
         default_alert_display_language = other_cap_settings.default_alert_display_language
@@ -411,15 +412,32 @@ class CapAlertPage(MetadataPageMixin, AbstractCapAlertPage):
             infos = sorted(infos, key=lambda x: sort_key(x, default_alert_display_language.code), reverse=True)
         
         context.update({
-            "org_logo": cap_setting.logo,
-            "sender_name": cap_setting.sender_name,
-            "sender_contact": cap_setting.sender,
             "alerts_url": self.get_parent().get_full_url(),
             "show_languages": len(self.info) > 1,
             "sorted_infos": infos,
         })
         
+        cap_setting_context = self.get_cap_setting_context()
+        
+        context.update(cap_setting_context)
+        
         return context
+    
+    def get_newsletter_context(self):
+        context = super().get_newsletter_context()
+        cap_setting_context = self.get_cap_setting_context()
+        context.update(cap_setting_context)
+        
+        return context
+    
+    def save(self, *args, **kwargs):
+        # if not imported, set the sent date as now
+        if not self.imported:
+            # use current time. Replace seconds and microseconds to 0
+            sent = timezone.now().replace(second=0, microsecond=0)
+            self.sent = sent
+        
+        return super().save(*args, **kwargs)
 
 
 @register_setting(name="other-cap-settings")
@@ -446,37 +464,21 @@ class OtherCAPSettings(BaseSiteSetting):
 
 
 def on_publish_cap_alert(sender, **kwargs):
-    instance = kwargs['instance']
+    from .tasks import (
+        handle_publish_alert_to_mqtt,
+        handle_publish_alert_to_webhook,
+        handle_generate_multimedia
+    )
     
-    if instance.status == "Actual" and instance.scope == "Public":
-        try:
-            # publish cap alert to mqtt
-            publish_cap_to_all_mqtt_brokers(instance.id)
-        except Exception as e:
-            logger.error(f"Error publishing cap alert to mqtt: {e}")
-            pass
-        
-        # publish cap alert to webhook
-        try:
-            fire_alert_webhooks(instance.id)
-        except Exception as e:
-            logger.error(f"Error publishing cap alert to webhook: {e}")
+    alert = kwargs['instance']
     
-    # create cap alert multimedia (PNG and PDF)
-    try:
-        # delete previous pdf preview if exists
-        if instance.alert_pdf_preview:
-            instance.alert_pdf_preview.delete()
-        
-        if instance.search_image:
-            instance.search_image.delete()
-        
-        if instance.alert_area_map_image:
-            instance.alert_area_map_image.delete()
-        
-        create_cap_alert_multi_media(instance.pk, clear_cache_on_success=True)
-    except Exception as e:
-        logger.error(f"Error creating cap alert multimedia: {e}")
+    if alert.status == "Actual" and alert.scope == "Public":
+        # publish to mqtt
+        handle_publish_alert_to_mqtt.delay(alert.id)
+        # publish to webhook
+        handle_publish_alert_to_webhook.delay(alert.id)
+        # generate multimedia
+        handle_generate_multimedia.delay(alert.id)
 
 
 page_published.connect(on_publish_cap_alert, sender=CapAlertPage)

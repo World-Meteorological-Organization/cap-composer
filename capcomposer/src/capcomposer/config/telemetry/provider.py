@@ -2,7 +2,7 @@ import os
 
 from opentelemetry.sdk.trace import TracerProvider
 
-from capcomposer.config.telemetry.env_overrides_parser import get_sampler_overrides_from_str
+from .env_overrides_parser import get_sampler_overrides_from_str
 
 CUSTOM_OTEL_SAMPLER_ENV_VAR_NAME = "OTEL_PER_MODULE_SAMPLER_OVERRIDES"
 

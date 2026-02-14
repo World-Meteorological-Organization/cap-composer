@@ -1,12 +1,9 @@
 import json
 
-from capcomposer.capeditor.constants import SEVERITY_MAPPING
-from capcomposer.capeditor.models import CapSetting
-from capcomposer.capeditor.utils import get_event_info
 from django.contrib.syndication.views import Feed
 from django.core.validators import validate_email
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -14,14 +11,21 @@ from django.utils.feedgenerator import Rss201rev2Feed
 from django.utils.feedgenerator import rfc2822_date
 from django.utils.translation import gettext as _
 from django.utils.xmlutils import SimplerXMLGenerator
+from wagtail.admin import messages
+from wagtail.api.v2.utils import get_full_url
+from wagtail_modeladmin.helpers import AdminURLHelper
+import markdown
 
+from capcomposer.capeditor.constants import SEVERITY_MAPPING
+from capcomposer.capeditor.models import CapSetting
+from capcomposer.capeditor.utils import get_event_info
 from .cache import wagcache
 from .models import (
     CapAlertPage,
     CapAlertListPage,
     OtherCAPSettings,
 )
-from .utils import get_full_url_by_site
+from .utils import get_full_url_by_site, create_cap_alert_multi_media
 from .utils import (
     serialize_and_sign_cap_alert,
     get_currently_active_alerts,
@@ -91,9 +95,10 @@ class AlertListFeed(Feed):
         self.cap_setting = CapSetting.for_request(request)
         return super().__call__(request, *args, **kwargs)
     
-    @staticmethod
-    def link():
-        return reverse("cap_alert_feed")
+    def link(self):
+        path = reverse("cap_alert_feed")
+        full_url = get_full_url_by_site(self.cap_setting.site, path)
+        return full_url
     
     def title(self):
         title = _("Latest alerts")
@@ -125,7 +130,9 @@ class AlertListFeed(Feed):
         return item.title
     
     def item_link(self, item):
-        return reverse("cap_alert_xml", args=[item.guid])
+        path = reverse("cap_alert_xml", args=[item.guid])
+        full_url = get_full_url_by_site(self.cap_setting.site, path)
+        return full_url
     
     def item_description(self, item):
         return item.info[0].value.get('description')
@@ -328,3 +335,57 @@ def get_latest_active_alert(request):
         return render(request, "cap/widgets/nav_top_alert.html", context)
     
     return render(request, "cap/widgets/nav_left_alert.html", context)
+
+
+def create_cap_png_pdf(request, alert_id):
+    """
+    Create CAP alert PNG and PDF
+    """
+    alert = get_object_or_404(CapAlertPage, id=alert_id)
+    
+    # delete previous pdf preview if exists
+    if alert.alert_pdf_preview:
+        alert.alert_pdf_preview.delete()
+    
+    if alert.search_image:
+        alert.search_image.delete()
+    
+    if alert.alert_area_map_image:
+        alert.alert_area_map_image.delete()
+    
+    try:
+        create_cap_alert_multi_media(alert.pk, clear_cache_on_success=True)
+        messages.success(request, _("CAP Alert PNG and PDF created successfully."))
+    except Exception as e:
+        messages.error(request, _("Failed to create CAP Alert PNG and PDF."))
+        messages.error(request, str(e))
+    
+    cap_index_url = AdminURLHelper(alert).get_action_url("index")
+    return redirect(cap_index_url)
+
+
+def third_party_integration(request):
+    """
+    A simple page to show third party integration options
+    """
+    cap_setting = CapSetting.for_request(request)
+    
+    cap_rss_feed_url = get_full_url(request, reverse("cap_alert_feed"))
+    
+    md_context = {
+        "sender_name": cap_setting.sender_name,
+        "feed_url": cap_rss_feed_url,
+    }
+    
+    md = markdown.Markdown(extensions=["fenced_code", "codehilite"])
+    
+    md_content = render_to_string("cap/third_party_integration_md_content.md", md_context)
+    
+    md_content = md.convert(md_content)
+    
+    context = {
+        **md_context,
+        "md_content": md_content,
+    }
+    
+    return render(request, "cap/third_party_integration.html", context)

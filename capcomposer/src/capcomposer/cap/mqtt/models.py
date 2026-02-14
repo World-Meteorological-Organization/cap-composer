@@ -10,6 +10,11 @@ CAP_MQTT_SECRET_KEY = getattr(settings, "CAP_MQTT_SECRET_KEY", None)
 
 
 class CAPAlertMQTTBroker(models.Model):
+    QOS_CHOICES = (
+        (0, _("At most once. Fire and forget")),
+        (1, _("At least once. I’ll keep sending until you say you got it")),
+    )
+    
     # Broker Information
     name = models.CharField(max_length=255, verbose_name=_("Name"),
                             help_text=_("Provide a name to identify the broker"))
@@ -24,12 +29,13 @@ class CAPAlertMQTTBroker(models.Model):
     password = models.CharField(max_length=255)
     
     # Checkbox for if the MQTT broker is a WIS2 node
-    is_wis2box = models.BooleanField(default=False, verbose_name=_("Is wis2box Node"),
+    is_wis2box = models.BooleanField(default=False, verbose_name=_("Is WIS2Box Node"),
                                      help_text=_("Check this box if you are providing the broker details of "
                                                  "a wis2box."))
     topic = models.CharField(max_length=255, blank=True, verbose_name=_("Topic"),
                              help_text=_("Provide the MQTT topic to publish the CAP alerts."), )
-    # wis2box Metadata
+    qos = models.PositiveIntegerField(default=0, choices=QOS_CHOICES, verbose_name=_("Quality of Service (QoS)"))
+    # WIS2Box Metadata
     wis2box_metadata_id = models.CharField(max_length=255, blank=True, verbose_name=_("Dataset ID"),
                                            help_text=_(
                                                "Provide the metadata ID for your dataset registered in the wis2box. "
@@ -67,7 +73,7 @@ class CAPAlertMQTTBroker(models.Model):
         
         if self.is_wis2box and not self.wis2box_metadata_id:
             raise ValidationError({
-                "wis2box_metadata_id": _("Dataset ID is required for a wis2box Broker")
+                "wis2box_metadata_id": _("Dataset ID is required for a WIS2Box Broker")
             })
         
         if not self.is_wis2box and not self.topic:

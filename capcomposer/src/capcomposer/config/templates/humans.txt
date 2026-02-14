@@ -1,6 +1,6 @@
 /* DEVELOPMENT TEAM */
 
-cap_composer is developed by a team of developers, climate scientists, and climate experts,
+CAPComposer is developed by a team of developers, climate scientists, and climate experts,
 together with the National Meteorological and Hydrological Services (NMHSs) in Africa.
 
 The core development and support team is composed of the following members:

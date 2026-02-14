@@ -18,19 +18,19 @@ CAP_COMPOSER_CELERY_BEAT_DEBUG_LEVEL=${CAP_COMPOSER_CELERY_BEAT_DEBUG_LEVEL:-INF
 CAP_COMPOSER_PORT="${CAP_COMPOSER_PORT:-8000}"
 
 # get the current version of the app
-CAP_COMPOSER_APP_VERSION=$(PYTHONPATH=/cap_composer/app/src/cap_composer python -c "import version; print(version.__version__)")
+CAP_COMPOSER_APP_VERSION=$(PYTHONPATH=/capcomposer/app/src/capcomposer python -c "import version; print(version.__version__)")
 
 show_help() {
     echo """
-The available cap_composer related commands and services are shown below:
+The available CAPComposer related commands and services are shown below:
 
 ADMIN COMMANDS:
-manage          : Manage cap_composer and its database
+manage          : Manage CAPComposer and its database
 shell           : Start a Django Python shell
 help            : Show this message
 
 SERVICE COMMANDS:
-gunicorn            : Start cap_composer using a prod ready gunicorn server:
+gunicorn            : Start CAPComposer using a prod ready gunicorn server:
                          * Waits for the postgres database to be available first.
                          * Automatically migrates the database on startup.
                          * Binds to 0.0.0.0
@@ -46,12 +46,19 @@ django-dev      : Start a normal django development server, performs
 }
 
 show_startup_banner() {
+  # Use https://manytools.org/hacker-tools/ascii-banner/ and the font Standard / Wide / Wide to generate
 cat <<EOF
-======================================
-WMO CAP Composer, based on Wagtail CMS
+=====================================================================================================
+   ____      _      ____       ____    ___    __  __   ____     ___    ____    _____   ____
+  / ___|    / \    |  _ \     / ___|  / _ \  |  \/  | |  _ \   / _ \  / ___|  | ____| |  _ \
+ | |       / _ \   | |_) |   | |     | | | | | |\/| | | |_) | | | | | \___ \  |  _|   | |_) |
+ | |___   / ___ \  |  __/    | |___  | |_| | | |  | | |  __/  | |_| |  ___) | | |___  |  _ <
+  \____| /_/   \_\ |_|        \____|  \___/  |_|  |_| |_|      \___/  |____/  |_____| |_| \_\
+
 
 Version $CAP_COMPOSER_APP_VERSION
-======================================
+
+=====================================================================================================
 EOF
 }
 
@@ -59,14 +66,14 @@ run_setup_commands_if_configured() {
 
         # migrate database
     if [ "$MIGRATE_ON_STARTUP" = "true" ]; then
-        echo "python /cap_composer/app/src/cap_composer/manage.py migrate"
-        python /cap_composer/app/src/cap_composer/manage.py migrate --noinput
+        echo "python /capcomposer/app/src/capcomposer/manage.py migrate"
+        /capcomposer/app/src/capcomposer/manage.py migrate --noinput
     fi
 
         # collect staticfiles
     if [ "$COLLECT_STATICFILES_ON_STARTUP" = "true" ]; then
-        echo "python /cap_composer/app/src/cap_composer/manage.py collectstatic --clear --noinput"
-        python /cap_composer/app/src/cap_composer/manage.py collectstatic --clear --noinput
+        echo "python /capcomposer/app/src/capcomposer/manage.py collectstatic --clear --noinput"
+        /capcomposer/app/src/capcomposer/manage.py collectstatic --clear --noinput
     fi
 }
 
@@ -77,7 +84,7 @@ start_celery_worker() {
     if [[ -n "$CAP_COMPOSER_NUM_OF_CELERY_WORKERS" ]]; then
         EXTRA_CELERY_ARGS+=(--concurrency "$CAP_COMPOSER_NUM_OF_CELERY_WORKERS")
     fi
-    exec celery -A cap_composer worker "${EXTRA_CELERY_ARGS[@]}" -l INFO "$@"
+    exec celery -A capcomposer worker "${EXTRA_CELERY_ARGS[@]}" -l INFO "$@"
 }
 
 # Lets devs attach to this container running the passed command, press ctrl-c and only
@@ -92,9 +99,9 @@ run_server() {
     run_setup_commands_if_configured
 
     if [[ "$1" = "wsgi" ]]; then
-        STARTUP_ARGS=(cap_composer.config.wsgi:application)
+        STARTUP_ARGS=(capcomposer.config.wsgi:application)
     elif [[ "$1" = "asgi" ]]; then
-        STARTUP_ARGS=(-k uvicorn.workers.UvicornWorker cap_composer.config.asgi:application)
+        STARTUP_ARGS=(-k uvicorn.workers.UvicornWorker capcomposer.config.asgi:application)
     else
         echo -e "\e[31mUnknown run_server argument $1 \e[0m" >&2
         exit 1
@@ -120,12 +127,12 @@ run_server() {
 setup_otel_vars(){
   # These key value pairs will be exported on every log/metric/trace by any otel
   # exporters running in subprocesses launched by this script.
-  EXTRA_OTEL_RESOURCE_ATTRIBUTES="service.namespace=cap_composer,"
+  EXTRA_OTEL_RESOURCE_ATTRIBUTES="service.namespace=CAPComposer,"
   EXTRA_OTEL_RESOURCE_ATTRIBUTES+="deployment.environment=${CAP_COMPOSER_DEPLOYMENT_ENV:-unknown}"
 
   if [[ -n "${OTEL_RESOURCE_ATTRIBUTES:-}" ]]; then
     # If the container has been launched with some extra otel attributes, make sure not
-    # to override them with our cap_composer specific ones.
+    # to override them with our CAPComposer specific ones.
     OTEL_RESOURCE_ATTRIBUTES="${EXTRA_OTEL_RESOURCE_ATTRIBUTES},${OTEL_RESOURCE_ATTRIBUTES}"
   else
     OTEL_RESOURCE_ATTRIBUTES="$EXTRA_OTEL_RESOURCE_ATTRIBUTES"
@@ -146,7 +153,7 @@ if [[ -z "${1:-}" ]]; then
 fi
 
 # activate virtualenv
-source /cap_composer/venv/bin/activate
+source /capcomposer/venv/bin/activate
 
 show_startup_banner
 
@@ -160,42 +167,42 @@ django-dev)
     run_setup_commands_if_configured
     echo "Running Development Server on 0.0.0.0:${CAP_COMPOSER_PORT}"
     echo "Press CTRL-p CTRL-q to close this session without stopping the container."
-    export OTEL_SERVICE_NAME=cap_composer-dev
-    attachable_exec python3 /cap_composer/app/src/cap_composer/manage.py runserver "0.0.0.0:${CAP_COMPOSER_PORT}"
+    export OTEL_SERVICE_NAME=capcomposer-dev
+    attachable_exec python3 /capcomposer/app/src/capcomposer/manage.py runserver "0.0.0.0:${CAP_COMPOSER_PORT}"
     ;;
 django-dev-no-attach)
     run_setup_commands_if_configured
     echo "Running Development Server on 0.0.0.0:${CAP_COMPOSER_PORT}"
-    export OTEL_SERVICE_NAME=cap_composer-dev
-    python /cap_composer/app/src/cap_composer/manage.py runserver "0.0.0.0:${CAP_COMPOSER_PORT}"
+    export OTEL_SERVICE_NAME=capcomposer-dev
+    python /capcomposer/app/src/capcomposer/manage.py runserver "0.0.0.0:${CAP_COMPOSER_PORT}"
     ;;
 gunicorn)
-    export OTEL_SERVICE_NAME="cap_composer-asgi"
+    export OTEL_SERVICE_NAME="capcomposer-asgi"
     run_server asgi "${@:2}"
     ;;
 gunicorn-wsgi)
-    export OTEL_SERVICE_NAME="cap_composer-wsgi"
+    export OTEL_SERVICE_NAME="capcomposer-wsgi"
     run_server wsgi "${@:2}"
     ;;
 manage)
-    export OTEL_SERVICE_NAME=cap_composer-manage
-    exec python3 /cap_composer/app/src/cap_composer/manage.py "${@:2}"
+    export OTEL_SERVICE_NAME=capcomposer-manage
+    exec python3 /capcomposer/app/src/capcomposer/manage.py "${@:2}"
     ;;
 shell)
-    export OTEL_SERVICE_NAME=cap_composer-shell
-    exec python3 /cap_composer/app/src/cap_composer/manage.py shell
+    export OTEL_SERVICE_NAME=capcomposer-shell
+    exec python3 /capcomposer/app/src/capcomposer/manage.py shell
     ;;
 celery-worker)
-    export OTEL_SERVICE_NAME="cap_composer-celery-worker"
+    export OTEL_SERVICE_NAME="capcomposer-celery-worker"
     start_celery_worker -Q celery -n default-worker@%h "${@:2}"
     ;;
 celery-worker-healthcheck)
     echo "Running celery worker healthcheck..."
-    exec celery -A cap_composer inspect ping -d "default-worker@$HOSTNAME" -t 10 "${@:2}"
+    exec celery -A capcomposer inspect ping -d "default-worker@$HOSTNAME" -t 10 "${@:2}"
     ;;
 celery-beat)
-    export OTEL_SERVICE_NAME="cap_composer-celery-beat"
-    exec celery -A cap_composer beat -l "${CAP_COMPOSER_CELERY_BEAT_DEBUG_LEVEL}" -S django_celery_beat.schedulers:DatabaseScheduler "${@:2}"
+    export OTEL_SERVICE_NAME="capcomposer-celery-beat"
+    exec celery -A capcomposer beat -l "${CAP_COMPOSER_CELERY_BEAT_DEBUG_LEVEL}" -S django_celery_beat.schedulers:DatabaseScheduler "${@:2}"
     ;;
 *)
     echo "Command given was $*"

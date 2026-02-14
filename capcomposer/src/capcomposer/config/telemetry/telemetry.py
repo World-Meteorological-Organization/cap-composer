@@ -18,8 +18,8 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics._internal.export import PeriodicExportingMetricReader
 from opentelemetry.trace import ProxyTracerProvider
 
-from capcomposer.config.telemetry.provider import DifferentSamplerPerLibraryTracerProvider
-from capcomposer.config.telemetry.utils import BatchBaggageSpanProcessor, otel_is_enabled
+from .provider import DifferentSamplerPerLibraryTracerProvider
+from .utils import BatchBaggageSpanProcessor, otel_is_enabled
 
 
 class LogGuruCompatibleLoggerHandler(LoggingHandler):
@@ -28,7 +28,7 @@ class LogGuruCompatibleLoggerHandler(LoggingHandler):
         # the extra log context developers can add on the extra dict. Here unnest
         # them as attributes on the record itself so otel can export them properly.
         for k, v in record.extra.items():
-            setattr(record, f"cap_composer.{k}", v)
+            setattr(record, f"capcomposer.{k}", v)
         del record.extra
         
         # by default otel doesn't send funcName, rename it so it does.
