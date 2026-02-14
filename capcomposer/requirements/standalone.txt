@@ -374,6 +374,8 @@ wagtail==7.0
     #   wagtail-2fa-v6
 wagtail-2fa-v6==1.0.7
     # via -r standalone.in
+wagtail-modeladmin==2.2.0
+    # via maaike's edit
 watchfiles==1.1.0
     # via uvicorn
 wcwidth==0.2.13
