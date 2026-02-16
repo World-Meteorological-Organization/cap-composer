@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'docs/**'
+      - 'docs-ghpages/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'docs/**'
+      - 'docs-ghpages/**'
 
 jobs:
   main:
@@ -25,4 +25,4 @@ jobs:
     - name: build docs ⚙️
       uses: ammaraskar/sphinx-action@master
       with:
-        docs-folder: "docs/"
+        docs-folder: "docs-ghpages/"
