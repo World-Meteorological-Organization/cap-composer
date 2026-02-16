@@ -101,7 +101,7 @@ This option will set up a Wagtail project together with the complete components 
 
    .. code-block:: shell
 
-      docker logs cap_composer
+      docker logs capcomposer
 
    The logs might indicate that `ALLOWED_HOSTS` or `CSRF_TRUSTED_ORIGINS` is not set correctly.
    If so update the .env file and restart the docker containers:
@@ -115,7 +115,7 @@ This option will set up a Wagtail project together with the complete components 
 
     .. code-block:: shell
 
-       docker compose exec cap_composer cap_composer createsuperuser
+       docker compose exec capcomposer capcomposer createsuperuser
 
 13. **Login to the Wagtail admin**
 
