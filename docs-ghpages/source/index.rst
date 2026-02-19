@@ -23,15 +23,24 @@ The user guide provides information on how to install and configure the WMO CAP 
    user/getting-started
    user/installation
    user/securing-your-installation
-   user/setting-boundaries
-   user/cap-base-settings
+   user/creating-alert-page
    user/user-management
+   user/cap-base-settings
+   user/setting-boundaries
    user/creating-alerts
    user/forwarding-cap-to-WIS2
+   user/2fa
+
+Maintenance and support
+=======================
+
+The WMO CAP Composer source code is available on `GitHub <https://github.com/World-Meteorological-Organization/cap-composer>`_, which is a fork of `WMO-RAF/NORCAP version of the CAP Composer <https://github.com/wmo-raf/cap-composer>`_ that is developed as part of the ClimWeb project.
+
+The support team of the WMO Secretariat is responsible for syncing the fork with the upstream repository, update the documentation and ensure the standalone version of the CAP Composer is working as expected.
 
 Contributing
 ============
 
-The WMO CAP Composer source code is available on `GitHub <https://github.com/World-Meteorological-Organization/cap-composer>`_. 
+It is recommended that contributions for bug fixes, enhancements are made upstream in the `WMO-RAF/NORCAP version of the CAP Composer <https://github.com/wmo-raf/cap-composer>`_. The support team at WMO Secretariat will then sync the changes to the WMO CAP Composer repository and update the documentation accordingly.
 
-Contributions to the project (documentation, bug fixes, enhancements, tests, etc.) are welcome and encouraged.
+To report any bugs or issues you encounter please use the `GitHub Issues <https://github.com/wmo-raf/cap-composer/issues>`_ page of the WMO-RAF/NORCAP CAP Composer repository.

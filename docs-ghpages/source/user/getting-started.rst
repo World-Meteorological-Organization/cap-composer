@@ -34,4 +34,6 @@ If you want to use different ports, you can modify the docker-compose.yml file d
 To run the CAP Composer in a production environment the server should have a public IP address and a domain name. Only port 443 and 80 should be open to the public.
 You will need to configure DNS to point to the IP address of your server, after which you can setup SSL using the Nginx Proxy Manager.
 
+**Next**: Once your host is prepared, proceed to the :doc:`Installation <installation>` section for instructions on installing the standalone CAP Composer.
+
 
