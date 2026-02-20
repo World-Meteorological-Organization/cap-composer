@@ -85,3 +85,5 @@ The Admin is responsible for managing users in the CAP Composer. The Admin can c
 
 .. image:: ../_static/images/cap_composer_user_admin.png
       :alt: WMO CAP Composer User Admin
+
+**Next**: Proceed to the :doc:`CAP base settings <cap-base-settings>` section to set up the base configuration for the CAP Alerts specific to your country.
