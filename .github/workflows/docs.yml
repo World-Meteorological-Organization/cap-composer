@@ -1,28 +1,35 @@
-name: build documentation ⚙️
+name: Build and Deploy Docs
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'docs-ghpages/**'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'docs-ghpages/**'
+      - docs-deploy-test
+  workflow_dispatch:
 
 jobs:
-  main:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      name: setup Python
-      with:
-        python-version: "3.10"
-    - name: build docs ⚙️
-      uses: ammaraskar/sphinx-action@master
-      with:
-        docs-folder: "docs-ghpages/"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r docs-ghpages/requirements.txt
+
+      - name: Build documentation
+        run: |
+          cd docs-ghpages
+          make html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs-ghpages/build/html
