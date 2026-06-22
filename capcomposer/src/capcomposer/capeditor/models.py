@@ -123,6 +123,8 @@ class CapAlertPageForm(WagtailAdminPageForm):
                             if default_language:
                                 info_field.block.child_blocks[block_type].child_blocks[
                                     field_name].meta.default = default_language
+                        
+                        block.intersection_area_threshold = cap_setting.intersection_area_threshold
     
     def clean(self):
         cleaned_data = super().clean()
@@ -216,8 +218,7 @@ class AbstractCapAlertPage(Page):
                                         "<status> 'Exercise' and <msgType> 'Error'"), verbose_name=_("Note"))
     info = StreamField([
         ("alert_info", AlertInfo(label=_("Alert Information")))
-    ], use_json_field=True, min_num=1, max_num=1, block_counts={'alert_info': {'max_num': 1, "min_num": 1}, },
-        verbose_name=_("Alert Information"), )
+    ], use_json_field=True, min_num=1, verbose_name=_("Alert Information"))
     
     addresses = StreamField([
         ("recipient", AlertAddress(label=_("Recipient")))
@@ -411,3 +412,5 @@ class AbstractCapAlertPage(Page):
         context = super().get_context(request, *args, **kwargs)
         context["geojson_features"] = self.get_geojson_features(request)
         return context
+
+    

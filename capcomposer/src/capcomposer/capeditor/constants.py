@@ -146,45 +146,48 @@ CAP_MESSAGE_ORDER_SEQUENCE = {
 
 SEVERITY_MAPPING = {
     "Extreme": {
-        "label": _("Red severity"),
-        "color": "#d72f2a",
-        "background_color": "#fcf2f2",
-        "border_color": "#721515",
-        "icon_color": "#fff",
-        "severity": "Extreme",
+        "label": _("Extreme severity"),
+        "color": "#d42d41",
+        "background_color": "#FEE2E2",
+        "border_color": "#DC2626",
+        "icon_color": "#d42d41",
+        "severity": _("Extreme"),
         "id": 4
     },
     "Severe": {
-        "label": _("Orange severity"),
-        "color": "#fe9900",
-        "background_color": "#fff9f2",
-        "border_color": "#9a6100",
-        "severity": "Severe",
+        "label": _("Severe severity"),
+        "color": "#f08c11",           # burnt orange
+        "background_color": "#FDE8D0", # soft peach
+        "border_color": "#C2600A",
+        "icon_color": "#f08c11",
+        "severity": _("Severe"),
         "id": 3
     },
     "Moderate": {
-        "label": _("Yellow severity"),
-        "color": "#ffff00",
-        "background_color": "#fffdf1",
-        "border_color": "#938616",
-        "severity": "Moderate",
+        "label": _("Moderate severity"),
+        "color": "#f4cf00",           # dark amber text
+        "background_color": "#FEF08A", # bright yellow bg
+        "border_color": "#A16207",
+        "icon_color": "#f4cf00",
+        "severity": _("Moderate"),
         "id": 2
     },
     "Minor": {
         "label": _("Minor severity"),
-        "color": "#03ffff",
-        "background_color": "#fffdf1",
-        "border_color": "#938616",
-        "severity": "Minor",
+        "color": "#399cc7",
+        "background_color": "#CFFAFE",
+        "border_color": "#0E7490",
+        "icon_color": "#399cc7",
+        "severity": _("Minor"),
         "id": 1
     },
     "Unknown": {
         "label": _("Unknown severity"),
-        "color": "#3366ff",
-        "background_color": "#fffdf1",
-        "border_color": "#122663",
-        "icon_color": "#fff",
-        "severity": "Unknown",
+        "color": "#82a8df",
+        "background_color": "#E0E7FF",
+        "border_color": "#4B6CB7",
+        "icon_color": "#82a8df",
+        "severity": _("Unknown"),
         "id": 0
     }
 }
@@ -192,27 +195,27 @@ SEVERITY_MAPPING = {
 URGENCY_MAPPING = {
     "Immediate": {
         "label": _("Immediate"),
-        "certainty": "Immediate",
+        "certainty": _("Immediate"),
         "id": 4
     },
     "Expected": {
         "label": _("Expected"),
-        "certainty": "Expected",
+        "certainty": _("Expected"),
         "id": 3
     },
     "Future": {
         "label": _("Future"),
-        "certainty": "Future",
+        "certainty": _("Future"),
         "id": 2
     },
     "Past": {
         "label": _("Past"),
-        "certainty": "Past",
+        "certainty": _("Past"),
         "id": 1
     },
     "Unknown": {
         "label": _("Unknown"),
-        "certainty": "Unknown",
+        "certainty": _("Unknown"),
         "id": 0
     },
 }
@@ -220,27 +223,27 @@ URGENCY_MAPPING = {
 CERTAINTY_MAPPING = {
     "Observed": {
         "label": _("Observed"),
-        "certainty": "Observed",
+        "certainty": _("Observed"),
         "id": 4
     },
     "Likely": {
         "label": _("Likely"),
-        "certainty": "Likely",
+        "certainty": _("Likely"),
         "id": 3
     },
     "Possible": {
         "label": _("Possible"),
-        "certainty": "Possible",
+        "certainty": _("Possible"),
         "id": 2
     },
     "Unlikely": {
         "label": _("Unlikely"),
-        "certainty": "Unlikely",
+        "certainty": _("Unlikely"),
         "id": 1
     },
     "Unknown": {
         "label": _("Unknown"),
-        "certainty": "Unknown",
+        "certainty": _("Unknown"),
         "id": 0
     },
 }

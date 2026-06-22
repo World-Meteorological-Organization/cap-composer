@@ -31,7 +31,22 @@ from .weasyprint_utils import django_url_fetcher
 
 def get_all_published_alerts():
     from .models import CapAlertPage
-    return CapAlertPage.objects.all().live().filter(status="Actual", scope="Public").order_by('-sent')
+    alerts = CapAlertPage.objects.all().live().filter(status="Actual", scope="Public")
+    
+    # Exclude alerts that have already been cancelled by a published public cancel alert.
+    cancelled_alert_ids = set()
+    cancel_alerts = alerts.filter(msgType="Cancel").only("references")
+    
+    for cancel_alert in cancel_alerts:
+        for reference in cancel_alert.references:
+            ref_alert = reference.value.get("ref_alert")
+            if ref_alert and hasattr(ref_alert, "id"):
+                cancelled_alert_ids.add(ref_alert.id)
+    
+    if cancelled_alert_ids:
+        alerts = alerts.exclude(id__in=cancelled_alert_ids)
+    
+    return alerts.order_by('-sent')
 
 
 def get_currently_active_alerts():
@@ -170,6 +185,98 @@ def create_cap_alert_multi_media(cap_alert_page_id, clear_cache_on_success=False
             clear_cache()
 
 
+def send_private_alert_email(alert_id):
+    from .models import CapAlertPage
+    
+    logger.info(f"Handling sending private alert email for alert ID: {alert_id}")
+    alert = CapAlertPage.objects.get(id=alert_id)
+    # Send email for Private scope
+    logger.info(f"CAP ALERT PUBLISHED: {alert.id}, Scope: {alert.scope}, Status: {alert.status}")
+    
+    if alert.status == "Actual" and alert.scope == "Private":
+        
+        from django.core.mail import EmailMultiAlternatives
+        from django.conf import settings
+        from .utils import create_alert_area_image, create_cap_pdf_document
+        recipients = []
+        for address in getattr(alert, 'addresses', []):
+            name = address.value.get("name")
+            email = address.value.get("address")
+            if email:
+                recipients.append({
+                    "email": email,
+                    "name": name
+                })
+        
+        # Generate image if not available
+        if not alert.alert_area_map_image or not alert.alert_area_map_image.file:
+            image = create_alert_area_image(alert.id)
+            if image:
+                alert.alert_area_map_image = image
+                alert.save()
+        
+        # Generate PDF if not available
+        if not alert.alert_pdf_preview or not alert.alert_pdf_preview.file:
+            pdf = create_cap_pdf_document(alert, template_name="cap/alert_detail_pdf.html")
+            if pdf:
+                alert.alert_pdf_preview = pdf
+                alert.save()
+        
+        subject = f"CAP Alert: {alert.title}"
+        # Get site base URL
+        site = alert.get_site() if hasattr(alert, 'get_site') else None
+        if site:
+            base_url = site.root_url.rstrip('/')
+        else:
+            base_url = getattr(settings, 'BASE_URL', 'http://localhost')
+        xml_link_full = f"{base_url}{alert.xml_link}"
+        # Get institution name and logo
+        from capcomposer.capeditor.cap_settings import CapSetting
+        cap_settings = CapSetting.for_site(site) if site else None
+        institution_name = cap_settings.sender_name if cap_settings and cap_settings.sender_name else ""
+        logo_cid = None
+        logo_data = None
+        if cap_settings and cap_settings.logo and hasattr(cap_settings.logo, 'file'):
+            logo_cid = "logo_image"
+            logo_file = cap_settings.logo.file
+            if logo_file.closed:
+                logo_file.open('rb')
+            logo_data = logo_file.read()
+            logo_file.close()
+        
+        # Compose best regards section
+        
+        for recipient in recipients:
+            best_regards = f"<p>Best regards,<br>{institution_name}</p>" if institution_name else "<p>Best regards</p>"
+            body = f"Dear {recipient['name']},\n\nYou have received a private CAP Alert.\n\nXML Link: {xml_link_full}\n\n{best_regards}"
+            html_body = f"<p>Dear {recipient['name']},</p><p>You have received a private CAP Alert.</p><p>XML Link: <a href='{xml_link_full}'>{xml_link_full}</a></p><p>{best_regards}</p>"
+            if logo_data and logo_cid:
+                html_body += f"<p><img src='cid:{logo_cid}' alt='Institution Logo' style='max-width:100px;'/></p>"
+            
+            email_msg = EmailMultiAlternatives(subject, body, settings.DEFAULT_FROM_EMAIL, [recipient['email']])
+            email_msg.attach_alternative(html_body, "text/html")
+            if logo_data and logo_cid:
+                from email.mime.image import MIMEImage
+                logo_img = MIMEImage(logo_data)
+                logo_img.add_header('Content-ID', f'<{logo_cid}>')
+                logo_img.add_header('Content-Disposition', 'inline', filename='logo.png')
+                email_msg.attach(logo_img)
+            if alert.alert_area_map_image and alert.alert_area_map_image.file:
+                map_file = alert.alert_area_map_image.file
+                if map_file.closed:
+                    map_file.open('rb')
+                map_data = map_file.read()
+                map_file.close()
+                email_msg.attach(alert.alert_area_map_image.title, map_data, 'image/png')
+            if alert.alert_pdf_preview and alert.alert_pdf_preview.file:
+                email_msg.attach(alert.alert_pdf_preview.title, alert.alert_pdf_preview.file.read(), 'application/pdf')
+            
+            from django.core.mail import get_connection
+            
+            connection = get_connection()
+            connection.send_messages([email_msg])
+
+
 def get_cap_contact_list_for_site(site):
     cap_settings = CapSetting.for_site(site)
     contacts_list = cap_settings.contact_list
@@ -182,19 +289,33 @@ def get_cap_audience_list_for_site(site):
     return audience_list
 
 
-def create_draft_alert_from_alert_data(alert_data, request=None, update_event_list=False, update_contact_list=False,
-                                       submit_for_moderation=False):
+def create_draft_alert_from_alert_data(
+        alert_data,
+        request=None,
+        site=None,
+        update_event_list=False,
+        update_contact_list=False,
+        submit_for_moderation=False,
+        include_guid=False
+):
     from .models import CapAlertPage, CapAlertListPage
-    
-    if request:
+
+    if site:
+        resolved_site = site
+        cap_settings = CapSetting.for_site(site)
+    elif request:
+        resolved_site = Site.find_for_request(request)
         cap_settings = CapSetting.for_request(request)
     else:
-        site = Site.objects.get(is_default_site=True)
-        cap_settings = CapSetting.for_site(site)
+        resolved_site = Site.objects.filter(is_default_site=True).first()
+        cap_settings = CapSetting.for_site(resolved_site)
     
     base_data = {
         "imported": True,  # mark this alert page as imported
     }
+    
+    if include_guid and alert_data["guid"]:
+        base_data["guid"] = alert_data["guid"]
     
     # an alert page requires a title
     # here we use the headline of the first info block
@@ -394,7 +515,12 @@ def create_draft_alert_from_alert_data(alert_data, request=None, update_event_li
     new_cap_alert_page = CapAlertPage(**base_data, live=False)
     new_cap_alert_page.info = StreamValue(new_cap_alert_page.info.stream_block, info_blocks, is_lazy=True)
     
-    cap_list_page = CapAlertListPage.objects.live().first()
+    if resolved_site:
+        cap_list_page = CapAlertListPage.objects.live().descendant_of(
+            resolved_site.root_page, inclusive=True
+        ).first()
+    else:
+        cap_list_page = CapAlertListPage.objects.live().first()
     
     if cap_list_page:
         cap_list_page.add_child(instance=new_cap_alert_page)

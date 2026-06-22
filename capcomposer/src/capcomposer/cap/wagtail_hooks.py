@@ -40,7 +40,7 @@ from .models import (
 from .utils import (
     create_draft_alert_from_alert_data
 )
-from .views import create_cap_png_pdf
+from .views import create_cap_png_pdf, send_private_alert_email_view, cap_statistics_view, cap_statistics_export_csv
 
 CAN_EDIT_CAP = getattr(settings, "CAP_ALLOW_EDITING", False)
 
@@ -49,6 +49,10 @@ CAN_EDIT_CAP = getattr(settings, "CAP_ALLOW_EDITING", False)
 def urlconf_cap():
     return [
         path('import-cap/<int:alert_id>/', create_cap_png_pdf, name='create_cap_png_pdf'),
+        path('send-private-alert-email/<int:alert_id>/', send_private_alert_email_view,
+             name='send_private_alert_email'),
+        path('cap/statistics/', cap_statistics_view, name='cap_statistics'),
+        path('cap/statistics/export/csv/', cap_statistics_export_csv, name='cap_statistics_export_csv'),
     ]
 
 
@@ -100,6 +104,15 @@ class CAPAlertPageButtonHelper(PageButtonHelper):
             buttons_for_live.append(live_button)
             
             buttons = buttons_for_live + buttons
+        
+        if obj.is_private_scope:
+            email_button = {
+                "url": reverse("send_private_alert_email", args=[obj.pk]),
+                "label": _("Email Recipients"),
+                "classname": cn,
+                "title": _("Send private alert email to recipients"),
+            }
+            buttons.append(email_button)
         
         return buttons
 
@@ -165,6 +178,10 @@ class CAPAlertWebhookAdmin(ModelAdmin):
     model = CAPAlertWebhook
     menu_label = _('Webhooks')
     menu_icon = 'multi-cluster-sector'
+    
+    def get_queryset(self, request):
+        site = Site.find_for_request(request)
+        return super().get_queryset(request).filter(site=site)
 
 
 class CAPAlertWebhookEventPermissionHelper(PermissionHelper):
@@ -190,6 +207,10 @@ class CAPAlertWebhookEventAdmin(ModelAdmin):
     inspect_view_enabled = True
     
     permission_helper_class = CAPAlertWebhookEventPermissionHelper
+    
+    def get_queryset(self, request):
+        site = Site.find_for_request(request)
+        return super().get_queryset(request).filter(webhook__site=site)
 
 
 class CAPAlertMQTTAdmin(ModelAdmin):
@@ -201,6 +222,10 @@ class CAPAlertMQTTAdmin(ModelAdmin):
     search_fields = ('name', 'wis2box_metadata_id')
     
     form_view_extra_js = ['cap/js/mqtt_collapse_panels.js']
+    
+    def get_queryset(self, request):
+        site = Site.find_for_request(request)
+        return super().get_queryset(request).filter(site=site)
 
 
 class CAPAlertMQTTEventPermissionHelper(PermissionHelper):
@@ -226,12 +251,20 @@ class CAPAlertMQTTEventAdmin(ModelAdmin):
     inspect_view_enabled = True
     
     permission_helper_class = CAPAlertMQTTEventPermissionHelper
+    
+    def get_queryset(self, request):
+        site = Site.find_for_request(request)
+        return super().get_queryset(request).filter(broker__site=site)
 
 
 class CAPExternalFeedAdmin(ModelAdmin):
     model = ExternalAlertFeed
     menu_label = _('External CAP Alert Feeds')
     menu_icon = 'link'
+    
+    def get_queryset(self, request):
+        site = Site.find_for_request(request)
+        return super().get_queryset(request).filter(site=site)
 
 
 class CAPMenuGroupAdminMenuItem(GroupMenuItem):
@@ -266,7 +299,11 @@ class CAPMenuGroup(ModelAdminGroup):
             item_order += 1
         
         try:
-            
+            # add statistics menu
+            statistics_url = reverse("cap_statistics")
+            statistics_menu = MenuItem(label=_("Statistics"), url=statistics_url, icon_name="date")
+            menu_items.append(statistics_menu)
+
             # add CAP import menu
             settings_url = reverse("load_cap_alert")
             import_cap_menu = MenuItem(label=_("Import CAP Alert"), url=settings_url, icon_name="upload")
@@ -314,6 +351,12 @@ def cap_page_listing_buttons(page, user, next_url=None):
                 _("Create PNG/PDF"),
                 reverse("create_cap_png_pdf", args=[page.pk]),
                 priority=10,
+            )
+        if page.is_private_scope:
+            yield wagtailadmin_widgets.PageListingButton(
+                _("Email Recipients"),
+                reverse("send_private_alert_email", args=[page.pk]),
+                priority=11,
             )
 
 
@@ -438,8 +481,10 @@ def before_delete_cap_alert_page(request, page):
 
 
 @hooks.register("before_import_cap_alert")
-def import_cap_alert(request, alert_data):
-    new_cap_alert_page = create_draft_alert_from_alert_data(alert_data, request)
+def import_cap_alert(request, alert_data, include_guid=False, site=None):
+    new_cap_alert_page = create_draft_alert_from_alert_data(
+        alert_data, request, site=site, include_guid=include_guid
+    )
     
     if not new_cap_alert_page:
         return None
