@@ -414,7 +414,7 @@ class PolygonWidget {
             case "Moderate":
                 return "#ffff00"
             case "Minor":
-                return "#03ffff"
+                return "#90ee90"
             default:
                 return "#3366ff"
         }

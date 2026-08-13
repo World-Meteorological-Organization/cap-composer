@@ -174,10 +174,10 @@ SEVERITY_MAPPING = {
     },
     "Minor": {
         "label": _("Minor severity"),
-        "color": "#399cc7",
-        "background_color": "#CFFAFE",
-        "border_color": "#0E7490",
-        "icon_color": "#399cc7",
+        "color": "#16a34a",
+        "background_color": "#DCFCE7",
+        "border_color": "#15803D",
+        "icon_color": "#16a34a",
         "severity": _("Minor"),
         "id": 1
     },
