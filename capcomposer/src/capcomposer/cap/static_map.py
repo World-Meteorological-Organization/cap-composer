@@ -6,6 +6,15 @@ from wagtail.images import get_image_model
 
 from capcomposer.capeditor.constants import SEVERITY_MAPPING
 
+# matches the fill-opacity used for the interactive maplibre maps
+ALERT_AREA_FILL_OPACITY = 0.3
+
+
+def _hex_to_rgba(hex_color, opacity=ALERT_AREA_FILL_OPACITY):
+    hex_color = hex_color.lstrip("#")
+    r, g, b = (int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+    return r, g, b, round(opacity * 255)
+
 
 def create_alert_area_image(
         alert_id,
@@ -26,7 +35,7 @@ def create_alert_area_image(
                     for polygon in area_polygons:
                         polygons.append({
                             "polygon": polygon,
-                            "fill_color": severity.get("color"),
+                            "fill_color": _hex_to_rgba(severity.get("color")),
                             "outline_color": severity.get("border_color")
                         })
     
