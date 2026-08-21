@@ -765,8 +765,8 @@ class AlertInfo(blocks.StructBlock):
             
             for i in range(len(geometries)):
                 for j in range(i + 1, len(geometries)):
-                    _, geom_i = geometries[i]
-                    _, geom_j = geometries[j]
+                    __, geom_i = geometries[i]
+                    __, geom_j = geometries[j]
                     
                     if geom_i.intersects(geom_j):
                         intersection = geom_i.intersection(geom_j)
