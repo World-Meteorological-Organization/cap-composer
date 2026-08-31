@@ -458,18 +458,14 @@ def copy_cap_alert_page(request, page):
         # Parent page defaults to parent of source page
         parent_page = page.get_parent()
         
-        # Create the form.
-        # Wagtail < 7.3 requires an explicit can_publish kwarg; from 7.3 onwards
-        # CopyForm derives it internally and rejects the kwarg.
-        form_kwargs = {"user": request.user, "page": page}
-
-        if WAGTAIL_VERSION < (7, 3):
-            form_kwargs["can_publish"] = parent_page.permissions_for_user(
-                request.user
-            ).can_publish_subpage()
-
-        form = CopyForm(request.POST or None, **form_kwargs)
-
+        # Check if the user has permission to publish subpages on the parent
+        can_publish = parent_page.permissions_for_user(request.user).can_publish_subpage()
+        
+        # Create the form
+        form = CopyForm(
+            request.POST or None, user=request.user, page=page, can_publish=can_publish
+        )
+        
         copy_form_fields_to_exclude = [
             "publish_copies",
             "alias",
